@@ -1,9 +1,8 @@
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-
-db = SQLAlchemy()
+from .db import db, init_app as init_db
+from . import commands
 
 def create_app(test_config=None):
     # Create and configure the app
@@ -27,15 +26,11 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    db.init_app(app)
+    # Initialize database
+    init_db(app)
     
     # Register commands
-    from . import commands
     commands.init_app(app)
-    
-    # Automatically create tables
-    with app.app_context():
-        db.create_all()
     
     # register blueprints
     from .apis import courier
