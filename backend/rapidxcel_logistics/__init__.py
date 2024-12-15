@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from .db import db, init_app as init_db
 from . import commands
@@ -37,9 +37,9 @@ def create_app(test_config=None):
     app.register_blueprint(courier.bp)
     
     # A simple route for testing
-    @app.route("/hello")
-    def hello():
-        return "Hello, World!"
+    @app.route("/")
+    def index():
+        return render_template("index.html")
     
     return app
 
