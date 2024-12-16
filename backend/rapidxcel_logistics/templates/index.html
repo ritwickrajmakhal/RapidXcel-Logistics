@@ -23,6 +23,8 @@
           <h2 class="text-center mb-0">RapidXcel Logistics API Documentation</h2>
         </div>
         <div class="card-body">
+          <!-- Couriers API Endpoints -->
+          <h3>Couriers</h3>
           <table class="table table-hover table-responsive">
             <thead class="table-dark">
               <tr>
@@ -57,7 +59,45 @@
                 <td><span class="badge bg-danger">DELETE</span></td>
                 <td>Delete a specific courier by ID</td>
               </tr>
-              <!-- Add more API endpoints as needed -->
+            </tbody>
+          </table>
+
+          <!-- Orders API Endpoints -->
+          <h3>Orders</h3>
+          <table class="table table-hover table-responsive">
+            <thead class="table-dark">
+              <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>/api/orders</td>
+                <td><span class="badge bg-success">GET</span></td>
+                <td>Retrieve a list of orders</td>
+              </tr>
+              <tr>
+                <td>/api/orders</td>
+                <td><span class="badge bg-primary">POST</span></td>
+                <td>Create a new order</td>
+              </tr>
+              <tr>
+                <td>/api/orders/{id}</td>
+                <td><span class="badge bg-success">GET</span></td>
+                <td>Retrieve a specific order by ID</td>
+              </tr>
+              <tr>
+                <td>/api/orders/{id}</td>
+                <td><span class="badge bg-warning text-dark">PUT</span></td>
+                <td>Update a specific order by ID</td>
+              </tr>
+              <tr>
+                <td>/api/orders/{id}</td>
+                <td><span class="badge bg-danger">DELETE</span></td>
+                <td>Delete a specific order by ID</td>
+              </tr>
             </tbody>
           </table>
         </div>
