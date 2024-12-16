@@ -34,20 +34,23 @@ class Inventory(db.Model):
 
 # Orders Table
 class Order(db.Model):
-    __tablename__ = 'orders'
+    __tablename__ = 'orders'  # Name of the table in the database
 
-    id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    order_date = db.Column(db.DateTime, default=datetime.utcnow)
-    delivery_address = db.Column(db.Text, nullable=False)
-    pin_code = db.Column(db.String(20), nullable=False)
-    shipping_cost = db.Column(db.Float, nullable=False)
-    total_cost = db.Column(db.Float, nullable=False)
-    status = db.Column(db.Enum('Processing', 'In Transit', 'Delivered', name='order_status'), default='Processing')
-
+    id = db.Column(db.Integer, primary_key=True)  # Order ID
+    customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Customer ID
+    shipping_address = db.Column(db.String(255), nullable=False)  # Shipping Address
+    consignment_weight = db.Column(db.Float, nullable=False)  # Weight of the consignment
+    shipping_cost = db.Column(db.Float, nullable=False)  # Shipping cost
+    status = db.Column(db.Enum('Processing', 'In Transit', 'Delivered', name='order_status'), default='Processing')  # Order status
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # Created timestamp
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())  # Updated timestamp
+    
     customer = db.relationship('User', back_populates='orders')
     order_items = db.relationship('OrderItem', back_populates='order', lazy=True)
     courier = db.relationship('Courier', back_populates='order', uselist=False)
+     
+    def __repr__(self):
+        return f'<Order {self.id}>'
 
 # Order Items Table
 class OrderItem(db.Model):
