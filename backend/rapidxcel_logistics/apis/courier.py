@@ -4,24 +4,15 @@ from flask import (
 from werkzeug.exceptions import abort
 from rapidxcel_logistics.models import Courier
 from rapidxcel_logistics import db
+from .utils import not_found_error, validation_error, internal_server_error
 
 bp = Blueprint('courier', __name__)
-
-# Utility function for not found error
-def not_found_error(entity_name):
-    return jsonify({'error': f'{entity_name} not found'}), 404
-
-# Utility function for validation errors
-def validation_error(message):
-    return jsonify({'error': message}), 400
-
 
 # Get all couriers
 @bp.route('/api/couriers', methods=['GET'])
 def get_couriers():
     couriers = Courier.query.all()
     return jsonify({'couriers': [courier.to_dict() for courier in couriers]}), 200
-
 
 # Get a single courier by ID
 @bp.route('/api/couriers/<int:id>', methods=['GET'])
@@ -30,7 +21,6 @@ def get_courier(id):
     if courier is None:
         return not_found_error('Courier')
     return jsonify(courier.to_dict()), 200
-
 
 # Create a new courier
 @bp.route('/api/couriers', methods=['POST'])
@@ -54,8 +44,7 @@ def create_courier():
         return jsonify(courier.to_dict()), 201
     except Exception as e:
         db.session.rollback()
-        return validation_error(str(e))
-
+        return internal_server_error(str(e))
 
 # Update a courier by ID
 @bp.route('/api/couriers/<int:id>', methods=['PUT'])
@@ -80,8 +69,7 @@ def update_courier(id):
         return jsonify(courier.to_dict()), 200
     except Exception as e:
         db.session.rollback()
-        return validation_error(str(e))
-
+        return internal_server_error(str(e))
 
 # Delete a courier by ID
 @bp.route('/api/couriers/<int:id>', methods=['DELETE'])
@@ -96,4 +84,4 @@ def delete_courier(id):
         return jsonify({'message': 'Courier deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return internal_server_error(str(e))
