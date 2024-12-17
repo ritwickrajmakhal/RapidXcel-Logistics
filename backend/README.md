@@ -33,7 +33,9 @@ This is the backend service for the RapidXcel Logistics application, built using
 
 4. Initialize the database:
    ```bash
-   flask --app rapidxcel_logistics init-db
+   flask --app rapidxcel_logistics:create_app db init
+   flask --app rapidxcel_logistics:create_app db migrate -m "Initial migration."
+   flask --app rapidxcel_logistics:create_app db upgrade
    ```
 
 ## Usage
