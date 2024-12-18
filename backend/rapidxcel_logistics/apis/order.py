@@ -45,28 +45,14 @@ def create_order():
 @bp.route('/api/orders', methods=['GET'])
 def get_orders():
     orders = Order.query.all()  # Query all orders
-    return jsonify([{
-        'id': order.id,
-        'customer_id': order.customer_id,
-        'shipping_address': order.shipping_address,
-        'consignment_weight': order.consignment_weight,
-        'shipping_cost': order.shipping_cost,
-        'status': order.status
-    } for order in orders]), 200
+    return jsonify([order.to_dict() for order in orders]), 200
 
 # Retrieve a specific order (GET)
 @bp.route('/api/orders/<int:order_id>', methods=['GET'])
 def get_order(order_id):
     order = Order.query.get(order_id)  # Query the order by ID
     if order:
-        return jsonify({
-            'id': order.id,
-            'customer_id': order.customer_id,
-            'shipping_address': order.shipping_address,
-            'consignment_weight': order.consignment_weight,
-            'shipping_cost': order.shipping_cost,
-            'status': order.status
-        }), 200
+        return jsonify(order.to_dict()), 200
     return not_found_error('Order')
 
 # Update an order (PUT)
