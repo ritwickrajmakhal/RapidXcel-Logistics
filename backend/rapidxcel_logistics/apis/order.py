@@ -45,28 +45,14 @@ def create_order():
 @bp.route('/api/orders', methods=['GET'])
 def get_orders():
     orders = Order.query.all()  # Query all orders
-    return jsonify([{
-        'id': order.id,
-        'customer_id': order.customer_id,
-        'shipping_address': order.shipping_address,
-        'consignment_weight': order.consignment_weight,
-        'shipping_cost': order.shipping_cost,
-        'status': order.status
-    } for order in orders]), 200
+    return jsonify([order.to_dict() for order in orders]), 200
 
 # Retrieve a specific order (GET)
 @bp.route('/api/orders/<int:order_id>', methods=['GET'])
 def get_order(order_id):
     order = Order.query.get(order_id)  # Query the order by ID
     if order:
-        return jsonify({
-            'id': order.id,
-            'customer_id': order.customer_id,
-            'shipping_address': order.shipping_address,
-            'consignment_weight': order.consignment_weight,
-            'shipping_cost': order.shipping_cost,
-            'status': order.status
-        }), 200
+        return jsonify(order.to_dict()), 200
     return not_found_error('Order')
 
 # Update an order (PUT)
@@ -80,11 +66,14 @@ def update_order(order_id):
     if not data:
         return validation_error('Request payload is missing')
 
-    order.customer_id = data.get('customer_id', order.customer_id)
-    order.shipping_address = data.get('shipping_address', order.shipping_address)
-    order.consignment_weight = data.get('consignment_weight', order.consignment_weight)
-    order.shipping_cost = calculate_shipping_cost(order.consignment_weight)  # Recalculate shipping cost
-    order.status = data.get('status', order.status)
+    # Update the order attributes dynamically
+    for key, value in data.items():
+        if hasattr(order, key):
+            setattr(order, key, value)
+
+    # Recalculate shipping cost if consignment_weight is updated
+    if 'consignment_weight' in data:
+        order.shipping_cost = calculate_shipping_cost(order.consignment_weight)
 
     try:
         db.session.commit()

@@ -1,0 +1,114 @@
+/* Sidebar.css */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.mobile-navbar {
+    background-color: #343a40;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    position: relative; /* Ensure it stays on top */
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+.navbar-toggler {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    z-index: 1001; /* Ensure it stays on top */
+}
+
+.navbar-toggler-icon {
+    display: inline-block;
+    width: 30px;
+    height: 2px;
+    background-color: white;
+    position: relative;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 2px;
+    background-color: white;
+    position: absolute;
+    left: 0;
+}
+
+.navbar-toggler-icon::before {
+    top: -8px;
+}
+
+.navbar-toggler-icon::after {
+    top: 8px;
+}
+
+.mobile-sidebar,
+.desktop-sidebar {
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+}
+
+.mobile-sidebar {
+    position: absolute;
+    width: 100%;
+    top: 50px;
+    left: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.desktop-sidebar {
+    display: none;
+}
+
+.sidebar-title {
+    text-align: center;
+    border-bottom: 1px solid #495057;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-link {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-link:hover {
+    background-color: #495057;
+}
+
+.sidebar-divider {
+    border: 0;
+    height: 1px;
+    background-color: #495057;
+    margin: 10px 0;
+}
+
+@media (min-width: 992px) {
+    .desktop-sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 250px;
+        height: 100vh;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-navbar,
+    .mobile-sidebar {
+        display: none;
+    }
+}

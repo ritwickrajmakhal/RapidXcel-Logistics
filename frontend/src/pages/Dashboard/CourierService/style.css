@@ -1,0 +1,226 @@
+#courier_service {
+  .container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  /* Heading */
+  h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 3px solid #007bff;
+    display: inline-block;
+    padding-bottom: 10px;
+  }
+
+  /* Table Styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  thead {
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  th,
+  td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #f1f5fc;
+  }
+
+  td {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  th {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  /* Button Styles */
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+
+  button:active {
+    background-color: #003f7f;
+    transform: scale(1);
+  }
+
+  /* Tooltip Style for Status Button */
+  button[title] {
+    position: relative;
+  }
+
+  button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    font-size: 0.75rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Highlight Status Color Based on Delivery Progress */
+  tbody tr td:nth-child(8) {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  tbody tr td:nth-child(8):contains("Processing") {
+    color: #ffa500; /* Orange for Processing */
+  }
+
+  tbody tr td:nth-child(8):contains("In Transit") {
+    color: #007bff; /* Blue for In Transit */
+  }
+
+  tbody tr td:nth-child(8):contains("Delivered") {
+    color: #28a745; /* Green for Delivered */
+  }
+
+  /* Add Hover Effects for Rows */
+  tbody tr {
+    transition: all 0.3s ease-in-out;
+  }
+
+  tbody tr:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Add Smooth Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    table {
+      font-size: 0.9rem;
+    }
+
+    th,
+    td {
+      padding: 10px;
+    }
+
+    button {
+      padding: 6px 10px;
+      font-size: 0.85rem;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    /* Make the table scrollable horizontally */
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    thead {
+      display: table; /* Retain table structure for thead */
+      width: 100%;
+    }
+
+    tbody {
+      display: table; /* Retain table structure for tbody */
+      width: 100%;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      font-size: 0.8rem;
+    }
+
+    /* Stack rows into cards */
+    tbody tr {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    tbody tr td {
+      display: block;
+      text-align: right;
+      position: relative;
+      padding: 10px 15px;
+    }
+
+    tbody tr td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    tbody tr td:nth-child(8)::before {
+      color: transparent; /* Hide label for status column since it's self-evident */
+    }
+  }
+}
