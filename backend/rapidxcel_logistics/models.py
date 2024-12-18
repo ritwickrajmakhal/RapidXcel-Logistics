@@ -70,6 +70,7 @@ class Order(db.Model):
             'shipping_cost': self.shipping_cost,
             'delivery_date': self.delivery_date.isoformat() if self.delivery_date else None,
             'status': self.status,
+            'courier_id': self.courier_id,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'order_items': [order_item.to_dict() for order_item in self.order_items],
