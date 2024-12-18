@@ -66,11 +66,14 @@ def update_order(order_id):
     if not data:
         return validation_error('Request payload is missing')
 
-    order.customer_id = data.get('customer_id', order.customer_id)
-    order.shipping_address = data.get('shipping_address', order.shipping_address)
-    order.consignment_weight = data.get('consignment_weight', order.consignment_weight)
-    order.shipping_cost = calculate_shipping_cost(order.consignment_weight)  # Recalculate shipping cost
-    order.status = data.get('status', order.status)
+    # Update the order attributes dynamically
+    for key, value in data.items():
+        if hasattr(order, key):
+            setattr(order, key, value)
+
+    # Recalculate shipping cost if consignment_weight is updated
+    if 'consignment_weight' in data:
+        order.shipping_cost = calculate_shipping_cost(order.consignment_weight)
 
     try:
         db.session.commit()
