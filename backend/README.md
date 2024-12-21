@@ -48,14 +48,6 @@ This is the backend service for the RapidXcel Logistics application, built using
 
 2. The server will start on `http://127.0.0.1:5000/`.
 
-## API Endpoints
-
-- `GET /api/couriers` - Get all couriers
-- `GET /api/couriers/:id` - Get one courier
-- `POST /api/couriers` - Add a new courier
-- `PUT /api/couriers/:id` - Update a courier
-- `DELETE /api/couriers/:id` - Delete a courier
-
 ## Contributing
 
 1. Fork the repository.
