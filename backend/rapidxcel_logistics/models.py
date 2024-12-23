@@ -1,6 +1,16 @@
 from . import db
 from datetime import datetime
 
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', back_populates='notifications')
+    
 # User Table
 class User(db.Model):
     __tablename__ = 'users'
@@ -14,6 +24,7 @@ class User(db.Model):
     orders = db.relationship('Order', back_populates='customer', lazy=True, foreign_keys='Order.customer_id')
     couriers = db.relationship('Order', back_populates='courier', lazy=True, foreign_keys='Order.courier_id')
     suppliers = db.relationship('Supplier', back_populates='user', lazy=True)
+    notifications = db.relationship('Notification', back_populates='user', lazy=True)
     
     def to_dict(self):
         """Convert the User instance into a dictionary."""
@@ -75,6 +86,17 @@ class Order(db.Model):
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'order_items': [order_item.to_dict() for order_item in self.order_items],
         }
+    
+    def update_status(self, new_status):
+        """Update the status of the order and create a notification."""
+        self.status = new_status
+        db.session.commit()
+        notification = Notification(
+            user_id=self.customer_id,
+            message=f"Your order {self.id} status has been updated to {new_status}."
+        )
+        db.session.add(notification)
+        db.session.commit()
 
 # Order Items Table
 class OrderItem(db.Model):
