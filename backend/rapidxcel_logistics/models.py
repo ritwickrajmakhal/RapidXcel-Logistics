@@ -13,7 +13,6 @@ class User(db.Model):
 
     orders = db.relationship('Order', back_populates='customer', lazy=True, foreign_keys='Order.customer_id')
     couriers = db.relationship('Order', back_populates='courier', lazy=True, foreign_keys='Order.courier_id')
-    suppliers = db.relationship('Supplier', back_populates='user', lazy=True)
     
     def to_dict(self):
         """Convert the User instance into a dictionary."""
@@ -98,11 +97,15 @@ class Supplier(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
     address = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    user = db.relationship('User', back_populates='suppliers')
-    supply_orders = db.relationship('SupplyOrder', back_populates='supplier', lazy=True)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "phone_number": self.phone_number,
+            "address": self.address
+        }
 
 # Supply Orders Table
 class SupplyOrder(db.Model):
@@ -116,5 +119,4 @@ class SupplyOrder(db.Model):
     status = db.Column(db.Enum('Processing', 'Dispatched', 'Delayed', 'Received', name='supply_order_status'), default='Processing')
     expected_delivery_date = db.Column(db.DateTime)
 
-    supplier = db.relationship('Supplier', back_populates='supply_orders')
     inventory = db.relationship('Inventory', back_populates='supply_orders')
