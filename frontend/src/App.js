@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Navbar from './components/Navbar';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/dashboard/*" element={<Dashboard />} />
       </Routes>
+      <ToastContainer position='bottom-right'/>
     </>
   );
 }
