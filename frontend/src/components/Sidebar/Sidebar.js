@@ -7,7 +7,6 @@ const Sidebar = () => {
 
   const toggleSidebar = () => {
     setOpen(!open);
-    console.log('Sidebar open:', !open); // Debugging line
   };
 
   return (
@@ -36,6 +35,10 @@ const Sidebar = () => {
             <Link to="/dashboard/couriers" className="sidebar-link" onClick={toggleSidebar}>
               Courier Service
             </Link>
+            <hr className="sidebar-divider" />
+            <Link to="/dashboard/suppliers" className="sidebar-link" onClick={toggleSidebar}>
+              Suppliers Management
+            </Link>
           </nav>
         </div>
       )}
@@ -50,6 +53,10 @@ const Sidebar = () => {
           <hr className="sidebar-divider" />
           <Link to="/dashboard/couriers" className="sidebar-link">
             Courier Service
+          </Link>
+          <hr className="sidebar-divider" />
+          <Link to="/dashboard/suppliers" className="sidebar-link">
+            Suppliers Management
           </Link>
         </nav>
       </div>
