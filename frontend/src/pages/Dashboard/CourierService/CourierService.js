@@ -9,12 +9,16 @@ const CourierService = () => {
     const [newStatus, setNewStatus] = useState("");
 
     const fetchCouriers = async () => {
-        const response = await fetch(`${BACKEND_URL}/api/orders`);
-        let data = await response.json();
-        // filter out orders with courier id
-        // TODO: Replace 1 with the actual courier id
-        data = data.filter(order => order.courier_id === 1);
-        setOrders(data);
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/orders`);
+            let data = await response.json();
+            // filter out orders with courier id
+            // TODO: Replace 1 with the actual courier id
+            data = data.filter(order => order.courier_id === 1);
+            setOrders(data);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     useEffect(() => {
