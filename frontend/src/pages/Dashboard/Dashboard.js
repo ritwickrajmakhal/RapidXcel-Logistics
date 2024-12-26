@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Overview from './Overview';
 import CourierService from './CourierService/CourierService';
+import SupplierManagement from './SupplierManagement';
 
 const Dashboard = () => (
   <div className="container-fluid">
@@ -20,6 +21,8 @@ const Dashboard = () => (
           <Route path="overview" element={<Overview />} />
           {/* Couriers Route */}
           <Route path="couriers" element={<CourierService />} />
+          {/* Suppliers Route */}
+          <Route path="suppliers" element={<SupplierManagement />} />
         </Routes>
       </div>
     </div>
