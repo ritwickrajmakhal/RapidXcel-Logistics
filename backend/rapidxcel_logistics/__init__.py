@@ -33,8 +33,9 @@ def create_app(test_config=None):
     commands.init_app(app)
     
     # register blueprints
-    from .apis import order
+    from .apis import order, supplier
     app.register_blueprint(order.bp)
+    app.register_blueprint(supplier.supplier_bp)
     
     # A simple route for testing
     @app.route("/")

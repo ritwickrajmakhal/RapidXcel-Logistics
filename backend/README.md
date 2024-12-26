@@ -6,7 +6,6 @@ This is the backend service for the RapidXcel Logistics application, built using
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
 
 ## Installation
