@@ -39,6 +39,10 @@ const Sidebar = () => {
             <Link to="/dashboard/suppliers" className="sidebar-link" onClick={toggleSidebar}>
               Suppliers Management
             </Link>
+            <hr className="sidebar-divider" />
+            <Link to="/dashboard/supply-orders" className="sidebar-link">
+              Supply Orders
+            </Link>
           </nav>
         </div>
       )}
@@ -57,6 +61,10 @@ const Sidebar = () => {
           <hr className="sidebar-divider" />
           <Link to="/dashboard/suppliers" className="sidebar-link">
             Suppliers Management
+          </Link>
+          <hr className="sidebar-divider" />
+          <Link to="/dashboard/supply-orders" className="sidebar-link">
+            Supply Orders
           </Link>
         </nav>
       </div>
