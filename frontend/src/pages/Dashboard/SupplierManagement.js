@@ -25,7 +25,7 @@ const SupplierManagement = () => {
             }
         }
         fetchSuppliers();
-    }, []);
+    }, [BACKEND_URL]);
 
     const validateForm = () => {
         const newErrors = {};
@@ -83,7 +83,7 @@ const SupplierManagement = () => {
             <AddEditModal mode={mode} supplier={supplier} setSupplier={setSupplier} handleAddEditSupplier={handleAddEditSupplier} errors={errors} />
             <DeleteModal supplier={supplier} handleDeleteSupplier={handleDeleteSupplier} />
             <div className="d-flex justify-content-between align-items-center">
-                <h1><u>Suppliers</u></h1>
+                <h1 className="mb-3"><u>Suppliers</u></h1>
                 <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { setMode("add"); setSupplier({ name: "", email: "", phone_number: "", address: "" }) }}>Add Supplier</button>
             </div>
             <table className="table table-hover table-responsive">

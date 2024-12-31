@@ -11,8 +11,14 @@ supplier_bp = Blueprint('supplier', __name__)
 def add_supplier():
     data = request.get_json()
     if not data:
-        return validation_error('Invalid input')
+        return validation_error('Request payload is missing')
 
+    # Validate required fields
+    required_fields = ['name', 'email', 'phone_number', 'address']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return validation_error(f'Missing required fields: {", ".join(missing_fields)}')
+    
     try:
         new_supplier = Supplier(
             name=data['name'],
@@ -47,7 +53,7 @@ def update_supplier(supplier_id):
     supplier = Supplier.query.get(supplier_id)
 
     if not supplier:
-        return not_found_error('Supplier not found')
+        return not_found_error('Supplier')
 
     try:
         supplier.name = data.get('name', supplier.name)
