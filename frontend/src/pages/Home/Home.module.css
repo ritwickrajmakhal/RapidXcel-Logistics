@@ -1,0 +1,174 @@
+.container {
+    position: relative;
+    background: url('https://img.freepik.com/premium-photo/large-clean-warehouse-with-shelfs-carboard-boxes-products-generative-ai-interior-industrial-warehouse-with-many-shelves-with-yellow-white-box-packing_620624-6984.jpg?w=996') no-repeat center center fixed;
+    display: flex;
+    background-size: cover;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Adjust the color and opacity as needed */
+    z-index: 1;
+}
+
+.container>* {
+    position: relative;
+    z-index: 2;
+}
+
+.title_container {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    width: 80px;
+    height: 80px;
+    transition: transform 1s ease-in-out;
+}
+
+.logo img:hover {
+    transform: rotate(360deg);
+}
+
+.brand_title {
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+
+.tagline {
+    margin: 10px 0;
+    font-size: 1.2rem;
+}
+
+.buttons {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.button {
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 2px solid white;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.button:hover {
+    background: white;
+    color: black;
+    transform: scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .brand_title {
+        font-size: 2rem;
+    }
+
+    .tagline {
+        font-size: 1rem;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    .title_container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Modal styles */
+.modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal_content {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.input_box {
+    margin: 10px 0;
+}
+
+.input_box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.manualbtn {
+    padding: 10px 20px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.switchToLogin,
+.switchToRegister {
+    background: none;
+    border: none;
+    color: #0066cc;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.switchToLogin:hover,
+.switchToRegister:hover {
+    color: #0044cc;
+    text-decoration: none;
+}
+
+.register_link {
+    margin-top: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: white;
+}
