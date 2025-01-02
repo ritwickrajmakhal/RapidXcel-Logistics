@@ -1,8 +1,9 @@
-from . import db
+from . import db, login_manager
 from datetime import datetime
+from flask_login import UserMixin
 
 # User Table
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -10,7 +11,9 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum('Inventory Manager', 'Customer', 'Supplier', 'Courier Service', name='user_roles'), nullable=False)
-
+    phone_number = db.Column(db.String(20), nullable=True)
+    address = db.Column(db.Text, nullable=True)
+    
     orders = db.relationship('Order', back_populates='customer', lazy=True, foreign_keys='Order.customer_id')
     couriers = db.relationship('Order', back_populates='courier', lazy=True, foreign_keys='Order.courier_id')
     
@@ -21,8 +24,13 @@ class User(db.Model):
             'name': self.name,
             'email': self.email,
             'role': self.role,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'phone_number': self.phone_number if self.phone_number else None,
+            'address': self.address if self.address else None,
         }
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Inventory Table
 class Inventory(db.Model):
@@ -38,7 +46,6 @@ class Inventory(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     order_items = db.relationship('OrderItem', back_populates='inventory', lazy=True)
-    supply_orders = db.relationship('SupplyOrder', back_populates='inventory', lazy=True)
 
 # Orders Table
 class Order(db.Model):
@@ -87,36 +94,3 @@ class OrderItem(db.Model):
 
     order = db.relationship('Order', back_populates='order_items')
     inventory = db.relationship('Inventory', back_populates='order_items')
-
-# Supplier Table
-class Supplier(db.Model):
-    __tablename__ = 'suppliers'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
-    address = db.Column(db.Text, nullable=False)
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "email": self.email,
-            "phone_number": self.phone_number,
-            "address": self.address
-        }
-
-# Supply Orders Table
-class SupplyOrder(db.Model):
-    __tablename__ = 'supply_orders'
-
-    id = db.Column(db.Integer, primary_key=True)
-    supplier_id = db.Column(db.Integer, db.ForeignKey('suppliers.id'), nullable=False)
-    inventory_id = db.Column(db.Integer, db.ForeignKey('inventory.id'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    total_cost = db.Column(db.Float, nullable=False)
-    status = db.Column(db.Enum('Processing', 'Dispatched', 'Delayed', 'Received', name='supply_order_status'), default='Processing')
-    expected_delivery_date = db.Column(db.DateTime)
-
-    inventory = db.relationship('Inventory', back_populates='supply_orders')
