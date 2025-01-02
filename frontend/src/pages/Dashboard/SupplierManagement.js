@@ -9,14 +9,17 @@ const SupplierManagement = () => {
         name: "",
         email: "",
         phone_number: "",
-        address: ""
+        address: "",
+        password: ""
     });
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchSuppliers = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/api/suppliers`);
+                const res = await fetch(`${BACKEND_URL}/api/suppliers`, {
+                    credentials: 'include'
+                });
                 const suppliers = await res.json();
                 setSuppliers(suppliers);
             }
@@ -33,6 +36,7 @@ const SupplierManagement = () => {
         if (!supplier.email) newErrors.email = "Email is required";
         if (!supplier.phone_number) newErrors.phone_number = "Phone number is required";
         if (!supplier.address) newErrors.address = "Address is required";
+        if (!supplier.password) newErrors.password = "Password is required";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -47,6 +51,7 @@ const SupplierManagement = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify(supplier)
             });
             const data = await res.json();
@@ -67,7 +72,8 @@ const SupplierManagement = () => {
     const handleDeleteSupplier = async () => {
         try {
             const res = await fetch(`${BACKEND_URL}/api/suppliers/${supplier.id}`, {
-                method: "DELETE"
+                method: "DELETE",
+                credentials: 'include'
             });
             const data = await res.json();
             setSuppliers(suppliers.filter(s => s.id !== supplier.id));
@@ -84,7 +90,7 @@ const SupplierManagement = () => {
             <DeleteModal supplier={supplier} handleDeleteSupplier={handleDeleteSupplier} />
             <div className="d-flex justify-content-between align-items-center">
                 <h1 className="mb-3"><u>Suppliers</u></h1>
-                <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { setMode("add"); setSupplier({ name: "", email: "", phone_number: "", address: "" }) }}>Add Supplier</button>
+                <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => { setMode("add"); setSupplier({ name: "", email: "", phone_number: "", address: "", password: "" }) }}>Add Supplier</button>
             </div>
             <table className="table table-hover table-responsive">
                 <thead>
@@ -151,6 +157,13 @@ const AddEditModal = ({ mode, supplier, setSupplier, handleAddEditSupplier, erro
                             <input type="text" className="form-control" id="address" value={supplier.address} onChange={(e) => setSupplier({ ...supplier, address: e.target.value })} required />
                             {errors.address && <div className="text-danger">{errors.address}</div>}
                         </div>
+                        {mode === "add" && (
+                            <div className="mb-3">
+                                <label htmlFor="password" className="form-label">Password</label>
+                                <input type="password" className="form-control" id="password" value={supplier.password} onChange={(e) => setSupplier({ ...supplier, password: e.target.value })} required />
+                                {errors.password && <div className="text-danger">{errors.password}</div>}
+                            </div>
+                        )}
                     </form>
                 </div>
                 <div className="modal-footer">
@@ -182,4 +195,4 @@ const DeleteModal = ({ supplier, handleDeleteSupplier }) => (
     </div>
 )
 
-export default SupplierManagement
+export default SupplierManagement;
