@@ -5,6 +5,9 @@ import CourierService from './CourierService/CourierService';
 import SupplierManagement from './SupplierManagement';
 import SupplyOrders from './SupplyOrders';
 import { useEffect, useState } from 'react';
+import StockManagement from './StockManagement/StockManagement';
+import AddStock from './StockManagement/AddStock';
+import UpdateStock from './StockManagement/UpdateStock';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -33,7 +36,7 @@ const Dashboard = () => {
       setUser(JSON.parse(userDetails));
     }
   }, [BACKEND_URL, navigate]);
-  
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -52,7 +55,12 @@ const Dashboard = () => {
             {/* Couriers Route */}
             {user?.role === 'Courier Service' && <Route path="couriers" element={<CourierService />} />}
             {/* Suppliers Route */}
-            {user?.role === 'Inventory Manager' && <Route path="suppliers" element={<SupplierManagement />} />}
+            {user?.role === 'Inventory Manager' && <>
+              <Route path="suppliers" element={<SupplierManagement />} />
+              <Route path="stock-management" element={<StockManagement />} />
+              <Route path="stock-management/addStock" element={<AddStock />} />
+              <Route path="stock-management/updateStock/:id" element={<UpdateStock />} />
+            </>}
             {/* Supply Orders Route */}
             {user?.role === 'Supplier' && <Route path="supply-orders" element={<SupplyOrders />} />}
           </Routes>

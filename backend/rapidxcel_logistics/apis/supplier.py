@@ -4,7 +4,6 @@ from rapidxcel_logistics import db
 from .utils import not_found_error, validation_error, internal_server_error, role_required
 from flask_login import login_required
 from werkzeug.security import generate_password_hash
-from flask_login import current_user
 
 supplier_bp = Blueprint('supplier', __name__)
 #feature-1 supplier management
@@ -93,7 +92,7 @@ def delete_supplier(supplier_id):
     supplier = User.query.get(supplier_id)
 
     if not supplier:
-        return not_found_error('Supplier not found')
+        return not_found_error('Supplier')
 
     db.session.delete(supplier)
     db.session.commit()

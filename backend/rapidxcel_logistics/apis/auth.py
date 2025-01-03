@@ -67,3 +67,7 @@ def logout():
 def profile():
     user_data = current_user.to_dict()
     return jsonify(user_data), 200
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

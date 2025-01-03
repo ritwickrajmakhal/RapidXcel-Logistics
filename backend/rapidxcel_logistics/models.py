@@ -1,5 +1,4 @@
-from . import db, login_manager
-from datetime import datetime
+from . import db
 from flask_login import UserMixin
 
 # User Table
@@ -28,24 +27,28 @@ class User(db.Model, UserMixin):
             'address': self.address if self.address else None,
         }
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+# Stock Table
+class Stock(db.Model):
+    __tablename__ = 'stocks'
 
-# Inventory Table
-class Inventory(db.Model):
-    __tablename__ = 'inventory'
-
-    id = db.Column(db.Integer, primary_key=True)
-    stock_name = db.Column(db.String(255), nullable=False)
-    stock_id = db.Column(db.String(255), unique=True, nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    stock_id = db.Column(db.Integer, primary_key=True)
+    stock_name = db.Column(db.String(80), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    weight = db.Column(db.Float, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    weight = db.Column(db.Integer, nullable=False)
 
-    order_items = db.relationship('OrderItem', back_populates='inventory', lazy=True)
+    def __repr__(self):
+        return f"<Stock {self.stock_name}>"
+    
+    def to_dict(self):
+        """Convert the Stock instance into a dictionary."""
+        return {
+            'stock_id': self.stock_id,
+            'stock_name': self.stock_name,
+            'price': self.price,
+            'quantity': self.quantity,
+            'weight': self.weight,
+        }
 
 # Orders Table
 class Order(db.Model):
@@ -88,9 +91,7 @@ class OrderItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
-    inventory_id = db.Column(db.Integer, db.ForeignKey('inventory.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     item_cost = db.Column(db.Float, nullable=False)
 
     order = db.relationship('Order', back_populates='order_items')
-    inventory = db.relationship('Inventory', back_populates='order_items')
