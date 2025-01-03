@@ -23,7 +23,7 @@ const CourierService = () => {
 
     useEffect(() => {
         fetchCouriers();
-    }, []);
+    });
 
     const handleUpdateStatus = async () => {
         if (selectedOrder && newStatus) {

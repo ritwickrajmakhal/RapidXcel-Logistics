@@ -1,0 +1,24 @@
+
+.dashboard-metrics {
+padding: 50px;
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+justify-content: center;
+}
+
+.card {
+width: 150px;
+padding: 20px;
+color: #fff;
+border-radius: 5px;
+text-align: center;
+}
+
+.purple { background: #8e44ad; }
+.teal { background: #1abc9c; }
+.orange { background: #f39c12; }
+.green { background: #27ae60; }
+.red { background: #c0392b; }
+.blue { background: #2980b9; }
+.cyan { background: #00bcd4; }
