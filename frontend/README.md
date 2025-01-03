@@ -31,7 +31,7 @@ Make sure you have the following installed:
 To configure environment variables, create a `.env` file in the `frontend` directory with the following content:
 
 ```
-REACT_APP_API_URL=`http://127.0.0.1:5000
+REACT_APP_API_URL=http://127.0.0.1:5000
 ```
 
 ### Running the Application
