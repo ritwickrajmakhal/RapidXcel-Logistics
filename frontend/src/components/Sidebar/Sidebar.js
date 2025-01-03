@@ -35,7 +35,10 @@ const Sidebar = ({ userRole }) => {
 
             {userRole === 'Courier Service' && <><Link to="/dashboard/couriers" className="sidebar-link" onClick={toggleSidebar}>Courier Service</Link><hr className="sidebar-divider" /></>}
 
-            {userRole === 'Inventory Manager' && <><Link to="/dashboard/suppliers" className="sidebar-link" onClick={toggleSidebar}>Suppliers Management</Link><hr className="sidebar-divider" /></>}
+            {userRole === 'Inventory Manager' && <>
+              <Link to="/dashboard/suppliers" className="sidebar-link" onClick={toggleSidebar}>Suppliers Management</Link><hr className="sidebar-divider" />
+              <Link to="/dashboard/stock-management" className="sidebar-link" onClick={toggleSidebar}>Stock Management</Link><hr className="sidebar-divider" />
+            </>}
 
             {userRole === 'Supplier' && <><Link to="/dashboard/supply-orders" className="sidebar-link" onClick={toggleSidebar}>Supply Orders</Link><hr className="sidebar-divider" /></>}
 
@@ -57,7 +60,10 @@ const Sidebar = ({ userRole }) => {
 
           {userRole === 'Courier Service' && <><Link to="/dashboard/couriers" className="sidebar-link" onClick={toggleSidebar}>Courier Service</Link><hr className="sidebar-divider" /></>}
 
-          {userRole === 'Inventory Manager' && <><Link to="/dashboard/suppliers" className="sidebar-link" onClick={toggleSidebar}>Suppliers Management</Link><hr className="sidebar-divider" /></>}
+          {userRole === 'Inventory Manager' && <>
+            <Link to="/dashboard/suppliers" className="sidebar-link" onClick={toggleSidebar}>Suppliers Management</Link><hr className="sidebar-divider" />
+            <Link to="/dashboard/stock-management" className="sidebar-link" onClick={toggleSidebar}>Stock Management</Link><hr className="sidebar-divider" />
+          </>}
 
           {userRole === 'Supplier' && <><Link to="/dashboard/supply-orders" className="sidebar-link" onClick={toggleSidebar}>Supply Orders</Link><hr className="sidebar-divider" /></>}
 
