@@ -9,7 +9,10 @@
     "react-router-dom": "^7.0.2",
     "react-scripts": "5.0.1",
     "react-toastify": "^11.0.2",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2"
   },
   "scripts": {
     "start": "react-scripts start",
