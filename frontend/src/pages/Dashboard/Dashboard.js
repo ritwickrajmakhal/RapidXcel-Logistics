@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import StockManagement from './StockManagement/StockManagement';
 import AddStock from './StockManagement/AddStock';
 import UpdateStock from './StockManagement/UpdateStock';
+import Analytics from './Analytics/Analytics';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -51,7 +52,7 @@ const Dashboard = () => {
             {/* Default Route Redirects to Overview */}
             <Route path="/" element={<Navigate to="overview" />} />
             {/* Overview Route */}
-            <Route path="overview" element={<Overview />} />
+            <Route path="overview" element={user?.role === 'Inventory Manager' ? <Analytics /> : <Overview />} />
             {/* Couriers Route */}
             {user?.role === 'Courier Service' && <Route path="couriers" element={<CourierService />} />}
             {/* Suppliers Route */}
