@@ -1,0 +1,161 @@
+.analytics-container {
+    width: 100%;
+    margin: 0 auto;
+
+    header {
+        background-color: #2c3e50;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    header .logo h1 {
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+    }
+
+    nav {
+        background-color: #34495e;
+        padding: 15px;
+        text-align: center;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    nav ul li {
+        display: inline;
+    }
+
+    nav ul li a {
+        color: #ecf0f1;
+        text-decoration: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+        color: #1abc9c;
+    }
+
+    main {
+        padding: 40px 20px;
+    }
+
+    #filters {
+        margin-bottom: 40px;
+    }
+
+    #filters h2 {
+        font-size: 1.8rem;
+        color: #34495e;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 10px;
+    }
+
+    #filters form {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    #filters form div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #filters form select,
+    #filters form input {
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: #1abc9c;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #16a085;
+    }
+
+    .section {
+        margin-bottom: 40px;
+    }
+
+    .section h2 {
+        font-size: 1.8rem;
+        color: #34495e;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 10px;
+    }
+
+    .charts {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .chart-container {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        flex: 1 1 45%;
+        max-width: 45%;
+        min-width: 300px;
+        margin-bottom: 20px;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Footer */
+    footer {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+        nav ul {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .charts {
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .chart-container {
+            flex: 1 1 100%;
+        }
+
+        #filters form {
+            flex-direction: column;
+        }
+    }
+}

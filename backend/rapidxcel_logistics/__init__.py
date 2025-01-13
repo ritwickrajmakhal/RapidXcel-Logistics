@@ -47,11 +47,12 @@ def create_app(test_config=None):
     principals.init_app(app)
     
     # register blueprints
-    from .apis import order, supplier, auth, stock
+    from .apis import order, supplier, auth, stock, analytics
     app.register_blueprint(order.bp)
     app.register_blueprint(supplier.supplier_bp)
     app.register_blueprint(auth.auth_bp)
     app.register_blueprint(stock.stock_bp)
+    app.register_blueprint(analytics.analytics_bp)
     
     # A simple route for testing
     @app.route("/")
