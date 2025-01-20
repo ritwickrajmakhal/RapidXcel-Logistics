@@ -10,7 +10,7 @@ stock_bp = Blueprint('stock', __name__)
 # Route for fetching all Stocks
 @stock_bp.route('/api/stocks', methods=['GET'])
 @login_required
-@role_required('Inventory Manager')
+@role_required('Inventory Manager', 'Customer')
 def get_stocks():
     try:
         stocks = Stock.query.all()
