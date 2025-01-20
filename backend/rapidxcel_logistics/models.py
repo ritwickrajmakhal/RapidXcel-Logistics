@@ -35,7 +35,7 @@ class Stock(db.Model):
     stock_name = db.Column(db.String(80), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    weight = db.Column(db.Integer, nullable=False)
+    weight = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return f"<Stock {self.stock_name}>"
@@ -57,9 +57,11 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Order ID
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Customer ID
     shipping_address = db.Column(db.String(255), nullable=False)  # Shipping Address
+    pin_code = db.Column(db.String(10), nullable=False)  # Pin Code
+    phone_number = db.Column(db.String(15), nullable=False)  # Phone Number
     consignment_weight = db.Column(db.Float, nullable=False)  # Weight of the consignment
     shipping_cost = db.Column(db.Float, nullable=False)  # Shipping cost
-    delivery_date = db.Column(db.DateTime, nullable=True)  # Delivery date
+    delivery_date = db.Column(db.DateTime, nullable=False)  # Delivery date
     status = db.Column(db.Enum('Processing', 'In Transit', 'Delivered', name='order_status'), default='Processing')  # Order status
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # Created timestamp
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())  # Updated timestamp
@@ -75,6 +77,8 @@ class Order(db.Model):
             'id': self.id,
             'customer_id': self.customer_id,
             'shipping_address': self.shipping_address,
+            'pin_code': self.pin_code,
+            'phone_number': self.phone_number,
             'consignment_weight': self.consignment_weight,
             'shipping_cost': self.shipping_cost,
             'delivery_date': self.delivery_date.isoformat() if self.delivery_date else None,
@@ -91,7 +95,9 @@ class OrderItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('stocks.stock_id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    item_cost = db.Column(db.Float, nullable=False)
+    weight = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Float, nullable=False)
 
     order = db.relationship('Order', back_populates='order_items')
