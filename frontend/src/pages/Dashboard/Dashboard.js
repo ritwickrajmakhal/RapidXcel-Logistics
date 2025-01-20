@@ -9,6 +9,9 @@ import StockManagement from './StockManagement/StockManagement';
 import AddStock from './StockManagement/AddStock';
 import UpdateStock from './StockManagement/UpdateStock';
 import Analytics from './Analytics/Analytics';
+import Products from "./OrderManagement/Products";
+import OrderPreview from "./OrderManagement/OrderPreview";
+import ConfirmOrder from "./OrderManagement/ConfirmOrder";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -16,26 +19,21 @@ const Dashboard = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
-    const userDetails = localStorage.getItem('user');
-    if (!userDetails) {
-      const fetchUser = async () => {
-        const res = await fetch(`${BACKEND_URL}/auth/profile`, {
-          credentials: 'include',
-        });
-        if (res.ok) {
-          const user = await res.json();
-          setUser(user);
-          localStorage.setItem('user', JSON.stringify(user));
-        }
-        else {
-          navigate('/');
-        }
+    const fetchUser = async () => {
+      const res = await fetch(`${BACKEND_URL}/auth/profile`, {
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const user = await res.json();
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+      } else {
+        localStorage.removeItem("user");
+        navigate("/");
       }
-      fetchUser();
-    }
-    else {
-      setUser(JSON.parse(userDetails));
-    }
+    };
+
+    fetchUser();
   }, [BACKEND_URL, navigate]);
 
   return (
@@ -52,22 +50,53 @@ const Dashboard = () => {
             {/* Default Route Redirects to Overview */}
             <Route path="/" element={<Navigate to="overview" />} />
             {/* Overview Route */}
-            <Route path="overview" element={user?.role === 'Inventory Manager' ? <Analytics /> : <Overview />} />
+            <Route
+              path="overview"
+              element={
+                user?.role === "Inventory Manager" ? (
+                  <Analytics />
+                ) : (
+                  <Overview />
+                )
+              }
+            />
             {/* Couriers Route */}
-            {user?.role === 'Courier Service' && <Route path="couriers" element={<CourierService />} />}
+            {user?.role === "Courier Service" && (
+              <Route path="couriers" element={<CourierService />} />
+            )}
             {/* Suppliers Route */}
-            {user?.role === 'Inventory Manager' && <>
-              <Route path="suppliers" element={<SupplierManagement />} />
-              <Route path="stock-management" element={<StockManagement />} />
-              <Route path="stock-management/addStock" element={<AddStock />} />
-              <Route path="stock-management/updateStock/:id" element={<UpdateStock />} />
-            </>}
+            {user?.role === "Inventory Manager" && (
+              <>
+                <Route path="suppliers" element={<SupplierManagement />} />
+                <Route path="stock-management" element={<StockManagement />} />
+                <Route
+                  path="stock-management/addStock"
+                  element={<AddStock />}
+                />
+                <Route
+                  path="stock-management/updateStock/:id"
+                  element={<UpdateStock />}
+                />
+              </>
+            )}
             {/* Supply Orders Route */}
-            {user?.role === 'Supplier' && <Route path="supply-orders" element={<SupplyOrders />} />}
+            {user?.role === "Supplier" && (
+              <Route path="supply-orders" element={<SupplyOrders />} />
+            )}
+            {/* Products Route */}
+            {user?.role === "Customer" && (
+              <>
+                <Route path="products" element={<Products />} />
+                <Route path="products/order-preview" element={<OrderPreview />} />
+                <Route path="products/confirm-order" element={<ConfirmOrder />} />
+
+              </>
+            )}
           </Routes>
         </div>
       </div>
-    </div>)
+    </div>
+  );
 };
 
 export default Dashboard;
