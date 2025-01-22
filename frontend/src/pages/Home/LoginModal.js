@@ -11,12 +11,18 @@ const LoginModal = (props) => {
 
     function closeModal() {
         props.enableLoginModal(false);
+        props.enableForgetPasswordModal(false);
     }
 
     function switchtoRegister() {
         props.enableLoginModal(false);
         props.enableRegisterModal(true);
+    }
 
+    function switchToForgetPassword() {
+        props.enableLoginModal(false);
+        props.enableRegisterModal(false);
+        props.enableForgetPasswordModal(true);
     }
 
     async function loginUser(event) {
@@ -63,6 +69,7 @@ const LoginModal = (props) => {
                         <button type="submit" className={styles.manualbtn}>Login</button>
                         <div className={styles.register_link}>
                             <p>Don't have an account? <button onClick={switchtoRegister} id="switchToRegister" className={styles.switchToLogin}>Register</button></p>
+                            <button onClick={switchToForgetPassword} className={styles.switchToLogin}>Forgot password? </button>
                         </div>
                     </form>
                 </div>
