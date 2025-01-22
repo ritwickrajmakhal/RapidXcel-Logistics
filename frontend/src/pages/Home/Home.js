@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import styles from './Home.module.css';
 import RegisterModal from './RegisterModal';
 import LoginModal from './LoginModal.js';
+import ForgetPasswordModal from './ForgetPasswordModal.js';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [registerModal, setRegisterModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
+  const [forgetPasswordModal, setForgetPasswordModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +37,8 @@ const Home = () => {
       </div>
 
       {registerModal && <RegisterModal enableRegisterModal={setRegisterModal} enableLoginModal={setLoginModal} />}
-      {loginModal && <LoginModal enableLoginModal={setLoginModal} enableRegisterModal={setRegisterModal} />}
+      {loginModal && <LoginModal enableLoginModal={setLoginModal} enableRegisterModal={setRegisterModal} enableForgetPasswordModal={setForgetPasswordModal} />}
+      {forgetPasswordModal && <ForgetPasswordModal enableLoginModal={setLoginModal} enableForgetPasswordModal={setForgetPasswordModal} />}
     </div>
   );
 }
