@@ -1,5 +1,7 @@
 from . import db
 from flask_login import UserMixin
+import uuid
+from datetime import datetime, timedelta
 
 # User Table
 class User(db.Model, UserMixin):
@@ -12,6 +14,8 @@ class User(db.Model, UserMixin):
     role = db.Column(db.Enum('Inventory Manager', 'Customer', 'Supplier', 'Courier Service', name='user_roles'), nullable=False)
     phone_number = db.Column(db.String(20), nullable=True)
     address = db.Column(db.Text, nullable=True)
+    reset_token = db.Column(db.String(255), nullable=True)
+    token_expiry = db.Column(db.DateTime, nullable=True)
     
     orders = db.relationship('Order', back_populates='customer', lazy=True, foreign_keys='Order.customer_id')
     couriers = db.relationship('Order', back_populates='courier', lazy=True, foreign_keys='Order.courier_id')
@@ -26,6 +30,10 @@ class User(db.Model, UserMixin):
             'phone_number': self.phone_number if self.phone_number else None,
             'address': self.address if self.address else None,
         }
+    
+    def generate_reset_token(self):
+        self.reset_token = str(uuid.uuid4())
+        self.token_expiry = datetime.now() + timedelta(hours=1)
 
 # Stock Table
 class Stock(db.Model):
@@ -101,3 +109,14 @@ class OrderItem(db.Model):
     price = db.Column(db.Float, nullable=False)
 
     order = db.relationship('Order', back_populates='order_items')
+    
+    def to_dict(self):
+        """Convert the OrderItem instance into a dictionary."""
+        return {
+            'id': self.id,
+            'order_id': self.order_id,
+            'product_id': self.product_id,
+            'quantity': self.quantity,
+            'weight': self.weight,
+            'price': self.price,
+        }
