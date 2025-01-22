@@ -5,9 +5,11 @@ from .db import db, init_app as init_db
 from . import commands
 from flask_login import LoginManager
 from flask_principal import Principal, Permission, RoleNeed
+from flask_mail import Mail
 
 login_manager = LoginManager()
 principals = Principal()
+mail = Mail()
 
 def create_app(test_config=None):
     # Create and configure the app
@@ -17,11 +19,17 @@ def create_app(test_config=None):
         r"/auth/*": {"origins": "*"}
     })
     app.config.from_mapping(
-        SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI=f"sqlite:///{os.path.join(app.instance_path, 'rapidxcel_logistics.sqlite')}",
+        SECRET_KEY=os.getenv('SECRET_KEY', 'dev'),
+        SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI', f"sqlite:///{os.path.join(app.instance_path, 'rapidxcel_logistics.sqlite')}"),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         SESSION_COOKIE_SAMESITE='None',
-        SESSION_COOKIE_SECURE=True
+        SESSION_COOKIE_SECURE=True,
+        MAIL_SERVER=os.getenv('MAIL_SERVER', 'smtp.gmail.com'),
+        MAIL_PORT=int(os.getenv('MAIL_PORT', 587)),
+        MAIL_USERNAME=os.getenv('MAIL_USERNAME', 'your_email@example.com'),
+        MAIL_PASSWORD=os.getenv('MAIL_PASSWORD', 'your_email_password'),
+        MAIL_USE_TLS=os.getenv('MAIL_USE_TLS', 'True').lower() in ['true', '1', 't'],
+        MAIL_USE_SSL=os.getenv('MAIL_USE_SSL', 'False').lower() in ['true', '1', 't']
     )
     
     if test_config is None:
@@ -42,9 +50,10 @@ def create_app(test_config=None):
     # Register commands
     commands.init_app(app)
     
-    # Initialize Flask-Login and Flask-Principal
+    # Initialize plugins
     login_manager.init_app(app)
     principals.init_app(app)
+    mail.init_app(app)
     
     # register blueprints
     from .apis import order, supplier, auth, stock, analytics
