@@ -37,6 +37,19 @@ This is the backend service for the RapidXcel Logistics application, built using
    flask --app rapidxcel_logistics:create_app db upgrade
    ```
 
+5. Creating a .env File
+
+To configure environment variables, create a `.env` file in the `backend` directory with the following content:
+
+```
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your_email@example.com
+MAIL_PASSWORD=your_email_password
+MAIL_USE_TLS=True
+MAIL_USE_SSL=False
+PASSWORD_RESET_URL=http://localhost:3001/reset-password
+```
 ## Usage
 
 1. Run the development server:
