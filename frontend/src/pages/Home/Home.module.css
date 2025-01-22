@@ -120,7 +120,6 @@
     border-radius: 10px;
     width: 90%;
     max-width: 400px;
-    text-align: center;
 }
 
 .input_box {
@@ -162,6 +161,7 @@
 
 .register_link {
     margin-top: 10px;
+    text-align: center;
 }
 
 .close {
