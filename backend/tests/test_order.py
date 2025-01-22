@@ -1,35 +1,6 @@
 from rapidxcel_logistics.models import Stock
-from rapidxcel_logistics import create_app, db
 import pytest
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..')))
-
-
-@pytest.fixture
-def app():
-    app = create_app({
-        'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
-    })
-
-    with app.app_context():
-        db.create_all()
-        yield app
-        db.drop_all()
-
-
-@pytest.fixture
-def client(app):
-    return app.test_client()
-
-
-@pytest.fixture
-def runner(app):
-    return app.test_cli_runner()
-
+from rapidxcel_logistics import db
 
 @pytest.fixture
 def auth(client):
