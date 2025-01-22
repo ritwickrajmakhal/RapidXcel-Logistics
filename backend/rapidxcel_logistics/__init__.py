@@ -6,7 +6,6 @@ from . import commands
 from flask_login import LoginManager
 from flask_principal import Principal, Permission, RoleNeed
 from flask_mail import Mail
-from dotenv import load_dotenv
 
 login_manager = LoginManager()
 principals = Principal()
