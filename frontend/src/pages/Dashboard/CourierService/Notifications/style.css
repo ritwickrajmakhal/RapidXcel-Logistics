@@ -38,6 +38,14 @@
         border-left: 8px solid #00acc1;
     }
 
+    .notification.processing {
+        border-left: 8px solid #ff9800;
+    }
+
+    .notification.delivered {
+        border-left: 8px solid #4caf50;
+    }
+
     /* Content Styling */
     .notification .details h3 {
         font-size: 1.4rem;
