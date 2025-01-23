@@ -23,7 +23,7 @@ const OrderPreview = () => {
             setTotalCost(base_cost + data.shipping_cost);
         };
         fetchShippingCost();
-    }, [total_weight, base_cost, pin_code]);
+    }, [total_weight, base_cost, pin_code, BACKEND_URL, location_type]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

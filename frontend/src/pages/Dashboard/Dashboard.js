@@ -12,6 +12,7 @@ import Analytics from './Analytics/Analytics';
 import Products from "./OrderManagement/Products";
 import OrderPreview from "./OrderManagement/OrderPreview";
 import ConfirmOrder from "./OrderManagement/ConfirmOrder";
+import Notifications from './CourierService/Notifications/Notifications';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -89,7 +90,7 @@ const Dashboard = () => {
                 <Route path="products" element={<Products />} />
                 <Route path="products/order-preview" element={<OrderPreview />} />
                 <Route path="products/confirm-order" element={<ConfirmOrder />} />
-
+                <Route path="notifications" element={<Notifications />} />
               </>
             )}
           </Routes>
