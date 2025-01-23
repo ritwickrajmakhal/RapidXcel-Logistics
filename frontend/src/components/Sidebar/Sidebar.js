@@ -42,7 +42,10 @@ const Sidebar = ({ userRole }) => {
 
             {userRole === 'Supplier' && <><Link to="/dashboard/supply-orders" className="sidebar-link" onClick={toggleSidebar}>Supply Orders</Link><hr className="sidebar-divider" /></>}
 
-            {userRole === 'Customer' && <><Link to="/dashboard/products" className="sidebar-link" onClick={toggleSidebar}>Products</Link><hr className="sidebar-divider" /></>}
+            {userRole === 'Customer' && <>
+              <Link to="/dashboard/products" className="sidebar-link" onClick={toggleSidebar}>Products</Link><hr className="sidebar-divider" />
+              <Link to="/dashboard/notifications" className="sidebar-link" onClick={toggleSidebar}>Notifications</Link><hr className="sidebar-divider" />
+            </>}
             <Link to="/logout" className="sidebar-link">
               Logout
             </Link>
@@ -67,7 +70,10 @@ const Sidebar = ({ userRole }) => {
           </>}
 
           {userRole === 'Supplier' && <><Link to="/dashboard/supply-orders" className="sidebar-link" onClick={toggleSidebar}>Supply Orders</Link><hr className="sidebar-divider" /></>}
-          {userRole === 'Customer' && <><Link to="/dashboard/products" className="sidebar-link" onClick={toggleSidebar}>Products</Link><hr className="sidebar-divider" /></>}
+          {userRole === 'Customer' && <>
+            <Link to="/dashboard/products" className="sidebar-link" onClick={toggleSidebar}>Products</Link><hr className="sidebar-divider" />
+            <Link to="/dashboard/notifications" className="sidebar-link" onClick={toggleSidebar}>Notifications</Link><hr className="sidebar-divider" />
+          </>}
           <Link to="/logout" className="sidebar-link">
             Logout
           </Link>

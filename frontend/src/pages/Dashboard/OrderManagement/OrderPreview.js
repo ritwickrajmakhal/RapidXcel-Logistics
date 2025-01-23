@@ -23,7 +23,7 @@ const OrderPreview = () => {
             setTotalCost(base_cost + data.shipping_cost);
         };
         fetchShippingCost();
-    }, [total_weight, base_cost, pin_code]);
+    }, [total_weight, base_cost, pin_code, BACKEND_URL, location_type]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,7 +41,7 @@ const OrderPreview = () => {
         if (res.ok) {
             navigate('/dashboard/products/confirm-order', { state: { orderDetails } });
         } else {
-            alert('Failed to place order. Please try again.');
+            alert(data.error);
         }
     }
     return (

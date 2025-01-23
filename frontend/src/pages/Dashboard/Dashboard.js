@@ -12,6 +12,7 @@ import Analytics from './Analytics/Analytics';
 import Products from "./OrderManagement/Products";
 import OrderPreview from "./OrderManagement/OrderPreview";
 import ConfirmOrder from "./OrderManagement/ConfirmOrder";
+import Notifications from './CourierService/Notifications/Notifications';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -62,7 +63,7 @@ const Dashboard = () => {
             />
             {/* Couriers Route */}
             {user?.role === "Courier Service" && (
-              <Route path="couriers" element={<CourierService />} />
+              <Route path="couriers" element={<CourierService user={user} />} />
             )}
             {/* Suppliers Route */}
             {user?.role === "Inventory Manager" && (
@@ -86,10 +87,10 @@ const Dashboard = () => {
             {/* Products Route */}
             {user?.role === "Customer" && (
               <>
-                <Route path="products" element={<Products />} />
+                <Route path="products" element={<Products user={user} />} />
                 <Route path="products/order-preview" element={<OrderPreview />} />
                 <Route path="products/confirm-order" element={<ConfirmOrder />} />
-
+                <Route path="notifications" element={<Notifications notifications={user.notifications} />} />
               </>
             )}
           </Routes>

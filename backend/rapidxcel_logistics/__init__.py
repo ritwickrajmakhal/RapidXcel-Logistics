@@ -56,12 +56,13 @@ def create_app(test_config=None):
     mail.init_app(app)
     
     # register blueprints
-    from .apis import order, supplier, auth, stock, analytics
+    from .apis import order, supplier, auth, stock, analytics, courier_service
     app.register_blueprint(order.bp)
     app.register_blueprint(supplier.supplier_bp)
     app.register_blueprint(auth.auth_bp)
     app.register_blueprint(stock.stock_bp)
     app.register_blueprint(analytics.analytics_bp)
+    app.register_blueprint(courier_service.courier_service_bp)
     
     # A simple route for testing
     @app.route("/")
