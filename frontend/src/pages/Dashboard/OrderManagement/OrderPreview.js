@@ -41,7 +41,7 @@ const OrderPreview = () => {
         if (res.ok) {
             navigate('/dashboard/products/confirm-order', { state: { orderDetails } });
         } else {
-            alert('Failed to place order. Please try again.');
+            alert(data.error);
         }
     }
     return (
