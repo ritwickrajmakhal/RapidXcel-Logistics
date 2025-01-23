@@ -18,7 +18,8 @@ class User(db.Model, UserMixin):
     token_expiry = db.Column(db.DateTime, nullable=True)
     
     orders = db.relationship('Order', back_populates='customer', lazy=True, foreign_keys='Order.customer_id')
-    couriers = db.relationship('Order', back_populates='courier', lazy=True, foreign_keys='Order.courier_id')
+    couriers = db.relationship('Order', back_populates='courier', lazy=True, foreign_keys='Order.courier_service_id')
+    notifications = db.relationship('Notification', back_populates='user', lazy=True, cascade='all, delete-orphan')
     
     def to_dict(self):
         """Convert the User instance into a dictionary."""
@@ -29,6 +30,7 @@ class User(db.Model, UserMixin):
             'role': self.role,
             'phone_number': self.phone_number if self.phone_number else None,
             'address': self.address if self.address else None,
+            'notifications': [notification.to_dict() for notification in self.notifications],
         }
     
     def generate_reset_token(self):
@@ -64,6 +66,7 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # Order ID
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Customer ID
+    courier_service_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Courier ID
     shipping_address = db.Column(db.String(255), nullable=False)  # Shipping Address
     pin_code = db.Column(db.String(10), nullable=False)  # Pin Code
     phone_number = db.Column(db.String(15), nullable=False)  # Phone Number
@@ -73,11 +76,10 @@ class Order(db.Model):
     status = db.Column(db.Enum('Processing', 'In Transit', 'Delivered', name='order_status'), default='Processing')  # Order status
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # Created timestamp
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())  # Updated timestamp
-    courier_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Courier ID
     
     customer = db.relationship('User', back_populates='orders', lazy=True, foreign_keys=[customer_id])
     order_items = db.relationship('OrderItem', back_populates='order', lazy=True)
-    courier = db.relationship('User', back_populates='couriers', lazy=True, foreign_keys=[courier_id])
+    courier = db.relationship('User', back_populates='couriers', lazy=True, foreign_keys=[courier_service_id])
     
     def to_dict(self):
         """Convert the Order instance into a dictionary."""
@@ -91,7 +93,7 @@ class Order(db.Model):
             'shipping_cost': self.shipping_cost,
             'delivery_date': self.delivery_date.isoformat() if self.delivery_date else None,
             'status': self.status,
-            'courier_id': self.courier_id,
+            'courier_service_id': self.courier_service_id,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'order_items': [order_item.to_dict() for order_item in self.order_items],
@@ -103,7 +105,8 @@ class OrderItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('stocks.stock_id'), nullable=False)
+    stock_id = db.Column(db.Integer, db.ForeignKey('stocks.stock_id'), nullable=False)
+    product_name = db.Column(db.String(80), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     weight = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -115,8 +118,31 @@ class OrderItem(db.Model):
         return {
             'id': self.id,
             'order_id': self.order_id,
-            'product_id': self.product_id,
+            'stock_id': self.stock_id,
+            'product_name': self.product_name,
             'quantity': self.quantity,
             'weight': self.weight,
             'price': self.price,
+        }
+        
+# Notifications Table for Customer
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    user = db.relationship('User', back_populates='notifications')
+    
+    def to_dict(self):
+        """Convert the Notification instance into a dictionary."""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'message': self.message,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
         }

@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, request, jsonify
 )
-from rapidxcel_logistics.models import Order, OrderItem, Stock
+from rapidxcel_logistics.models import Order, OrderItem, Stock, Notification
 from rapidxcel_logistics import db
 from .utils import not_found_error, validation_error, internal_server_error, role_required
 from flask_login import login_required
@@ -53,7 +53,7 @@ def create_order():
         return validation_error('Request payload is missing')
     
     # Validate required fields
-    required_fields = ['customer_id', 'shipping_address', 'pin_code', 'phone_number', 'items', 'location_type']
+    required_fields = ['customer_id', 'shipping_address', 'pin_code', 'phone_number', 'items', 'location_type', 'courier_service_id']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return validation_error(f'Missing required fields: {", ".join(missing_fields)}')
@@ -61,6 +61,7 @@ def create_order():
     try:
         new_order = Order(
             customer_id=data['customer_id'],
+            courier_service_id=data['courier_service_id'],
             shipping_address=data['shipping_address'],
             pin_code=data['pin_code'],
             phone_number=data['phone_number'],
@@ -75,7 +76,8 @@ def create_order():
         for item in data['items']:
             order_item = OrderItem(
                 order_id=new_order.id,
-                product_id=item['product_id'],
+                stock_id=item['stock_id'],
+                product_name=item['product_name'],
                 quantity=item['quantity'],
                 weight=item['weight'],
                 price=item['price']
@@ -83,7 +85,7 @@ def create_order():
             db.session.add(order_item)
             
             # reduce the quantity of the product in the stock
-            product = Stock.query.get(item['product_id'])
+            product = Stock.query.get(item['stock_id'])
             product.quantity -= int(item['quantity'])
             db.session.add(product)
         
@@ -99,6 +101,9 @@ def create_order():
 @role_required('Customer', 'Courier Service')
 def get_orders():
     orders = Order.query.all()  # Query all orders
+    for order in orders:
+        order.items = [item.to_dict() for item in order.order_items]
+        # print(order.items)
     return jsonify([order.to_dict() for order in orders]), 200
 
 # Retrieve a specific order (GET)
@@ -124,10 +129,15 @@ def update_order(order_id):
     if not data:
         return validation_error('Request payload is missing')
 
+    old_status = order.status
+    status_updated = False
+
     # Update the order attributes dynamically
     for key, value in data.items():
         if hasattr(order, key):
             setattr(order, key, value)
+            if key == 'status' and value != old_status:
+                status_updated = True
 
     # Recalculate shipping cost if consignment_weight is updated
     if 'consignment_weight' in data:
@@ -135,6 +145,24 @@ def update_order(order_id):
 
     try:
         db.session.commit()
+        
+        # Create a notification if the status is updated
+        if status_updated:
+            status_messages = {
+                'Processing': 'Your order is now being processed.',
+                'In Transit': 'Your order is on the way.',
+                'Delivered': 'Your order has been delivered.'
+            }
+            notification_message = status_messages.get(order.status, f'Your order status has been updated to {order.status}.')
+
+            notification = Notification(
+                user_id=order.customer_id,
+                title=order.status,
+                message=f'Order ID {order_id}: {notification_message}'
+            )
+            db.session.add(notification)
+            db.session.commit()
+
         return jsonify({'message': 'Order updated successfully'}), 200
     except Exception as e:
         db.session.rollback()
