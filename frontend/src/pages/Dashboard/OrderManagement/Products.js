@@ -1,21 +1,31 @@
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import "./css/styles.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-const Products = () => {
+const Products = ({ user }) => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [orderDetails, setOrderDetails] = useState({
-    customer_id: JSON.parse(localStorage.getItem('user')).id,
+    customer_id: user.id,
     shipping_address: "",
     pin_code: "",
     location_type: "",
     phone_number: "",
     items: [],
+    courier_service_id: 0,
   });
+  const [couriers_services, setCouriersServices] = useState([]);
 
+  // Fetch products and courier services
   useEffect(() => {
+    const fetchCouriersServices = async () => {
+      const res = await fetch(`${BACKEND_URL}/api/couriers-services`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setCouriersServices(data);
+    };
     const fetchProducts = async () => {
       const res = await fetch(`${BACKEND_URL}/api/stocks`, {
         credentials: "include",
@@ -24,14 +34,23 @@ const Products = () => {
       setProducts(data);
     };
     fetchProducts();
+    fetchCouriersServices();
   }, [BACKEND_URL]);
 
   const handleInputChange = (e, product) => {
     const { value } = e.target;
     setOrderDetails((prevDetails) => {
-      const items = prevDetails.items.filter((item) => item.product_id !== product.stock_id);
+      const items = prevDetails.items.filter(
+        (item) => item.stock_id !== product.stock_id
+      );
       if (value > 0) {
-        items.push({ product_id: product.stock_id, product_name: product.stock_name, quantity: value, weight: product.weight, price: product.price });
+        items.push({
+          stock_id: product.stock_id,
+          product_name: product.stock_name,
+          quantity: value,
+          weight: product.weight,
+          price: product.price,
+        });
       }
       return { ...prevDetails, items };
     });
@@ -39,9 +58,16 @@ const Products = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { shipping_address, pin_code, location_type, phone_number, items } = orderDetails;
+    const { shipping_address, pin_code, location_type, phone_number, items } =
+      orderDetails;
 
-    if (!shipping_address || !pin_code || !phone_number || items.length === 0 || !location_type) {
+    if (
+      !shipping_address ||
+      !pin_code ||
+      !phone_number ||
+      items.length === 0 ||
+      !location_type
+    ) {
       alert("Please fill in all required fields and add at least one product.");
       return;
     }
@@ -78,7 +104,9 @@ const Products = () => {
                       min="0"
                       max={product.quantity}
                       value={
-                        orderDetails.items.find((item) => item.product_id === product.stock_id)?.quantity || 0
+                        orderDetails.items.find(
+                          (item) => item.stock_id === product.stock_id
+                        )?.quantity || 0
                       }
                       onChange={(e) => handleInputChange(e, product)}
                     />
@@ -99,7 +127,12 @@ const Products = () => {
             className="form-control"
             rows="2"
             value={orderDetails.shipping_address}
-            onChange={(e) => setOrderDetails({ ...orderDetails, shipping_address: e.target.value })}
+            onChange={(e) =>
+              setOrderDetails({
+                ...orderDetails,
+                shipping_address: e.target.value,
+              })
+            }
             required
           ></textarea>
         </div>
@@ -114,7 +147,9 @@ const Products = () => {
             name="pin_code"
             className="form-control"
             value={orderDetails.pin_code}
-            onChange={(e) => setOrderDetails({ ...orderDetails, pin_code: e.target.value })}
+            onChange={(e) =>
+              setOrderDetails({ ...orderDetails, pin_code: e.target.value })
+            }
             required
           />
         </div>
@@ -123,11 +158,45 @@ const Products = () => {
           <label htmlFor="phone_number" className="form-label">
             Location Type:
           </label>
-          <select class="form-select" aria-label="Default select example" required onChange={(e) => setOrderDetails({ ...orderDetails, location_type: e.target.value })}>
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            required
+            onChange={(e) =>
+              setOrderDetails({
+                ...orderDetails,
+                location_type: e.target.value,
+              })
+            }
+          >
             <option selected>Select Location Type</option>
             <option value="urban">Urban</option>
             <option value="suburban">Suburban</option>
             <option value="rural">Rural</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="phone_number" className="form-label">
+            Courier Service:
+          </label>
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            required
+            onChange={(e) =>
+              setOrderDetails({
+                ...orderDetails,
+                courier_service_id: e.target.value,
+              })
+            }
+          >
+            <option selected>Select Courier Service</option>
+            {couriers_services.map((courier_service) => (
+              <option key={courier_service.id} value={courier_service.id}>
+                {courier_service.name}, {courier_service.address}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -141,7 +210,9 @@ const Products = () => {
             name="phone_number"
             className="form-control"
             value={orderDetails.phone_number}
-            onChange={(e) => setOrderDetails({ ...orderDetails, phone_number: e.target.value })}
+            onChange={(e) =>
+              setOrderDetails({ ...orderDetails, phone_number: e.target.value })
+            }
             required
           />
         </div>
