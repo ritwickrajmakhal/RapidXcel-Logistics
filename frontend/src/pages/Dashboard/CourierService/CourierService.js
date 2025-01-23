@@ -1,29 +1,31 @@
 import { useEffect, useState } from "react";
 import "./style.css";
+import { toast } from "react-toastify";
 
-const CourierService = () => {
+const CourierService = ({ user }) => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [newStatus, setNewStatus] = useState("");
 
-    const fetchCouriers = async () => {
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/orders`);
-            let data = await response.json();
-            // filter out orders with courier id
-            // TODO: Replace 1 with the actual courier id
-            data = data.filter(order => order.courier_id === 1);
-            setOrders(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     useEffect(() => {
-        fetchCouriers();
-    });
+        const fetchOrders = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/orders`, {
+                    credentials: 'include',
+                });
+                let data = await response.json();
+                if (response.ok)
+                    setOrders(data.filter(order => order.courier_service_id === user.id));
+                else
+                    console.error(data.error);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchOrders();
+    }, []);
 
     const handleUpdateStatus = async () => {
         if (selectedOrder && newStatus) {
@@ -33,13 +35,11 @@ const CourierService = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ status: newStatus }),
+                credentials: 'include',
             });
             if (response.ok) {
-                const updatedOrder = await response.json();
-                setOrders(orders.map(order => order.id === updatedOrder.id ? updatedOrder : order));
-                setSelectedOrder(null);
-                setNewStatus("");
-                fetchCouriers(); // Fetch the latest orders after update
+                toast.success("Order status updated successfully");
+                setOrders(orders.map(order => order.id === selectedOrder.id ? { ...order, status: newStatus } : order));
             }
         }
     };
@@ -70,7 +70,7 @@ const CourierService = () => {
                                 <td>{order.created_at}</td>
                                 <td>{order.shipping_address}</td>
                                 <td>{order.consignment_weight}</td>
-                                <td>{order.order_items.join(", ")}</td>
+                                <td>{order.order_items.map((item) => item.product_name).join(", ")}</td>
                                 <td>{order.shipping_cost}</td>
                                 <td>{order.delivery_date}</td>
                                 <td>{order.status}</td>
