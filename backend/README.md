@@ -48,7 +48,7 @@ MAIL_USERNAME=your_email@example.com
 MAIL_PASSWORD=your_email_password
 MAIL_USE_TLS=True
 MAIL_USE_SSL=False
-PASSWORD_RESET_URL=http://localhost:3001/reset-password
+PASSWORD_RESET_URL=http://localhost:3000/reset-password
 ```
 ## Usage
 
