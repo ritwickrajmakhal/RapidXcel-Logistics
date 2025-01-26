@@ -13,6 +13,8 @@ import Products from "./OrderManagement/Products";
 import OrderPreview from "./OrderManagement/OrderPreview";
 import ConfirmOrder from "./OrderManagement/ConfirmOrder";
 import Notifications from './CourierService/Notifications/Notifications';
+import SupplyProducts from './SupplyProducts';
+import StockReplenishment from './StockManagement/StockReplenishment';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -61,29 +63,30 @@ const Dashboard = () => {
                 )
               }
             />
+
             {/* Couriers Route */}
             {user?.role === "Courier Service" && (
               <Route path="couriers" element={<CourierService user={user} />} />
             )}
+
             {/* Suppliers Route */}
             {user?.role === "Inventory Manager" && (
               <>
                 <Route path="suppliers" element={<SupplierManagement />} />
                 <Route path="stock-management" element={<StockManagement />} />
-                <Route
-                  path="stock-management/addStock"
-                  element={<AddStock />}
-                />
-                <Route
-                  path="stock-management/updateStock/:id"
-                  element={<UpdateStock />}
-                />
+                <Route path="stock-management/addStock" element={<AddStock />} />
+                <Route path="stock-management/updateStock/:id" element={<UpdateStock />} />
+                <Route path="stock-replenishment" element={<StockReplenishment user={user} />} />
+                <Route path="my-orders" element={<SupplyOrders user={user} />} />
               </>
             )}
+
             {/* Supply Orders Route */}
-            {user?.role === "Supplier" && (
-              <Route path="supply-orders" element={<SupplyOrders />} />
-            )}
+            {user?.role === "Supplier" && <>
+              <Route path="supply-orders" element={<SupplyOrders user={user} />} />
+              <Route path="supply-products" element={<SupplyProducts user={user} />} />
+            </>}
+
             {/* Products Route */}
             {user?.role === "Customer" && (
               <>
