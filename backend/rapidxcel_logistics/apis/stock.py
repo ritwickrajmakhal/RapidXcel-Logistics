@@ -30,12 +30,13 @@ def add_stock():
     if not data:
         return jsonify({"danger":"Please provide required data"}), 400
 
-    requied_fields = ['name', 'price', 'quantity', 'weight']
+    requied_fields = ['inventory_manager_id', 'name', 'price', 'quantity', 'weight']
     missing_fields = [field for field in requied_fields if field not in data]
     if missing_fields:
         return jsonify({"danger": f"Missing Fields: {', '.join(missing_fields)}"}), 400
 
     new_stock = Stock(
+        inventory_manager_id=data["inventory_manager_id"],
         stock_name=data["name"],
         price=data["price"],
         quantity=data["quantity"],
