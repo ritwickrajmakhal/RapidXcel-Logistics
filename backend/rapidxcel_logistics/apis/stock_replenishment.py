@@ -62,6 +62,10 @@ def place_replenishment_order():
     if missing_fields:
         return validation_error(f'Missing required fields: {", ".join(missing_fields)}')
 
+    # Ensure that the items field is a list and not empty
+    if not isinstance(data['items'], list) or not data['items']:
+        return validation_error('The items field must be a non-empty list')
+
     try:
         order = ReplenishmentOrder(
             inventory_manager_id=data['inventory_manager_id'],
@@ -137,51 +141,3 @@ def update_replenishment_order(order_id):
     except Exception as e:
         return internal_server_error(str(e))
 
-# Supply Orders Overview
-@stock_replenishment_bp.route('/supply-orders', methods=['GET'])
-def get_supply_orders():
-    try:
-        # Fetch all replenishment orders
-        orders = ReplenishmentOrder.query.all()
-
-        # Transform each order to include product name, total cost, etc.
-        order_details = [order.to_dict() for order in orders]
-
-        return jsonify(order_details), 200
-    except Exception as e:
-        return internal_server_error(str(e))
-
-
-# to change the status of order and add delivery date
-@stock_replenishment_bp.route('/replenishment-orders/<int:order_id>', methods=['PUT'])
-def update_order(order_id):
-    data = request.get_json()
-
-    # Fetch the order
-    order = ReplenishmentOrder.query.get(order_id)
-    if not order:
-        return jsonify({"error": "Order not found"}), 404
-
-    try:
-        # Update the status if provided
-        if 'status' in data:
-            status = data['status'].strip()
-            if status not in ['Pending', 'Approved', 'Rejected', 'Dispatched', 'Delayed', 'Processing', 'Order Received']:
-                return jsonify({"error": "Invalid status"}), 400
-            order.status = status
-
-        # Update the expected delivery time if provided
-        if 'expected_delivery_time' in data:
-            try:
-                delivery_time = datetime.strptime(
-                    data['expected_delivery_time'], "%Y-%m-%d %H:%M:%S")
-                order.expected_delivery_time = delivery_time
-            except ValueError:
-                return jsonify({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS'."}), 400
-
-        # Commit the changes
-        db.session.commit()
-        return jsonify({"message": "Order updated successfully", "order": order.to_dict()}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400

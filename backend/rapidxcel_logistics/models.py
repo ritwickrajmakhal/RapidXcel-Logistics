@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
     products = db.relationship('Product', back_populates='user', lazy=True, cascade='all, delete-orphan')
     replenishment_orders = db.relationship('ReplenishmentOrder', back_populates='inventory_manager', lazy=True, cascade='all, delete-orphan', foreign_keys='ReplenishmentOrder.inventory_manager_id')
     supply_orders = db.relationship('ReplenishmentOrder', back_populates='supplier', lazy=True, cascade='all, delete-orphan', foreign_keys='ReplenishmentOrder.supplier_id')
+    stocks = db.relationship('Stock', back_populates='inventory_manager', lazy=True, cascade='all, delete-orphan')
     
     def to_dict(self):
         """Convert the User instance into a dictionary."""
@@ -37,6 +38,7 @@ class User(db.Model, UserMixin):
             'products': [product.to_dict() for product in self.products],
             'replenishment_orders': [order.to_dict() for order in self.replenishment_orders],
             'supply_orders': [order.to_dict() for order in self.supply_orders],
+            'stocks': [stock.to_dict() for stock in self.stocks],
         }
     
     def generate_reset_token(self):
@@ -48,11 +50,15 @@ class Stock(db.Model):
     __tablename__ = 'stocks'
 
     stock_id = db.Column(db.Integer, primary_key=True)
+    inventory_manager_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     stock_name = db.Column(db.String(80), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     weight = db.Column(db.Float, nullable=False)
 
+    # relationships
+    inventory_manager = db.relationship('User', back_populates='stocks', lazy=True)
+    
     def __repr__(self):
         return f"<Stock {self.stock_name}>"
     

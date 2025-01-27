@@ -29,9 +29,8 @@ def calculate_shipping_cost(total_weight, location_type):
     shipping_cost = (cost_per_kg * total_weight) + location_cost[location_type]
     return shipping_cost
 
+
 # API endpoint to calculate shipping cost
-
-
 @bp.route('/api/orders/get-shipping-cost', methods=['GET'])
 @login_required
 @role_required('Customer')
@@ -45,9 +44,8 @@ def get_shipping_cost():
     except ValueError as e:
         return validation_error(str(e))
 
+
 # Create an order (POST)
-
-
 @bp.route('/api/orders', methods=['POST'])
 @login_required
 @role_required('Customer')
@@ -105,14 +103,23 @@ def create_order():
             db.session.add(product)
 
         db.session.commit()
+
+        # Create a notification for the customer
+        notification = Notification(
+            user_id=new_order.customer_id,
+            title='Processing',
+            message=f'Your order with ID {new_order.id} has been placed successfully. It will be processed soon.'
+        )
+        db.session.add(notification)
+        db.session.commit()
+
         return jsonify({'message': 'Order created successfully', 'order_id': new_order.id}), 201
     except Exception as e:
         db.session.rollback()
         return internal_server_error(str(e))
 
+
 # Retrieve all orders (GET)
-
-
 @bp.route('/api/orders', methods=['GET'])
 @login_required
 @role_required('Customer', 'Courier Service')
@@ -123,9 +130,8 @@ def get_orders():
         # print(order.items)
     return jsonify([order.to_dict() for order in orders]), 200
 
+
 # Retrieve a specific order (GET)
-
-
 @bp.route('/api/orders/<int:order_id>', methods=['GET'])
 @login_required
 @role_required('Customer')
@@ -135,9 +141,8 @@ def get_order(order_id):
         return jsonify(order.to_dict()), 200
     return not_found_error('Order')
 
+
 # Update an order (PUT)
-
-
 @bp.route('/api/orders/<int:order_id>', methods=['PUT'])
 @login_required
 @role_required('Customer', 'Courier Service')
@@ -190,9 +195,8 @@ def update_order(order_id):
         db.session.rollback()
         return internal_server_error(str(e))
 
+
 # Delete an order (DELETE)
-
-
 @bp.route('/api/orders/<int:order_id>', methods=['DELETE'])
 @login_required
 @role_required('Customer')
