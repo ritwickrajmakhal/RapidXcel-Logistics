@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Alert from './Alert';
 import { useNavigate } from 'react-router-dom';
 
-const AddStock = () => {
+const AddStock = ({ user, setUser }) => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -21,6 +21,7 @@ const AddStock = () => {
             },
             credentials: 'include',
             body: JSON.stringify({
+                inventory_manager_id: user.id,
                 name,
                 price,
                 quantity,
@@ -29,14 +30,27 @@ const AddStock = () => {
         })
 
         const data = await res.json();
-        setalert({
-            type: Object.keys(data)[0],
-            msg: data[Object.keys(data)[0]],
-            status: true
-        })
-        setTimeout(() => {
-            navigate("/dashboard/stock-management")
-        }, 2000)
+        if(res.ok){
+            setUser((prev) => {
+                const newStock = [...prev.stocks, data.stock];
+                return { ...prev, stocks: newStock };
+            });
+            setalert({
+                type: "success",
+                msg: data.message,
+                status: true
+            });
+            setTimeout(() => {
+                navigate("/dashboard/stock-management");
+            }, 2000);
+        }
+        else {
+            setalert({
+                type: "danger",
+                msg: data.error,
+                status: true
+            });
+        }
     }
 
     useEffect(() => {
@@ -52,22 +66,22 @@ const AddStock = () => {
             <form onSubmit={addStock}>
 
                 <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Stock Name</label>
+                    <label htmlFor="name" className="form-label"><strong>Stock Name</strong></label>
                     <input type="text" name='name' className="form-control" id="name" value={name} onChange={(event) => { setName(event.target.value) }} required />
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="price" className="form-label">Stock Price</label>
+                    <label htmlFor="price" className="form-label"><strong>Stock Price ($)</strong></label>
                     <input type="text" name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} required />
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="quantity" className="form-label">Stock Quantity</label>
+                    <label htmlFor="quantity" className="form-label"><strong>Stock Quantity</strong></label>
                     <input type="text" name="quantity" className="form-control" id="quantity" value={quantity} onChange={(event) => { setQuantity(event.target.value) }} required />
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="weight" className="form-label">Stock Weight</label>
+                    <label htmlFor="weight" className="form-label"><strong>Stock Weight (kg)</strong></label>
                     <input type="text" name='weight' className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} required />
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>

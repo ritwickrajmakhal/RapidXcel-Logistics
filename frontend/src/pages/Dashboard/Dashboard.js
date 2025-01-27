@@ -2,8 +2,8 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Overview from './Overview';
 import CourierService from './CourierService/CourierService';
-import SupplierManagement from './SupplierManagement';
-import SupplyOrders from './SupplyOrders';
+import SupplierManagement from './Supplier/SupplierManagement';
+import SupplyOrders from './Supplier/SupplyOrders';
 import { useEffect, useState } from 'react';
 import StockManagement from './StockManagement/StockManagement';
 import AddStock from './StockManagement/AddStock';
@@ -13,7 +13,7 @@ import Products from "./OrderManagement/Products";
 import OrderPreview from "./OrderManagement/OrderPreview";
 import ConfirmOrder from "./OrderManagement/ConfirmOrder";
 import Notifications from './CourierService/Notifications/Notifications';
-import SupplyProducts from './SupplyProducts';
+import SupplyProducts from './Supplier/SupplyProducts';
 import StockReplenishment from './StockManagement/StockReplenishment';
 
 const Dashboard = () => {
@@ -73,8 +73,8 @@ const Dashboard = () => {
             {user?.role === "Inventory Manager" && (
               <>
                 <Route path="suppliers" element={<SupplierManagement />} />
-                <Route path="stock-management" element={<StockManagement />} />
-                <Route path="stock-management/addStock" element={<AddStock />} />
+                <Route path="stock-management" element={<StockManagement user={user} setUser={setUser} />} />
+                <Route path="stock-management/addStock" element={<AddStock user={user} setUser={setUser} />} />
                 <Route path="stock-management/updateStock/:id" element={<UpdateStock />} />
                 <Route path="stock-replenishment" element={<StockReplenishment user={user} />} />
                 <Route path="my-orders" element={<SupplyOrders user={user} />} />

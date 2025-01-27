@@ -150,6 +150,9 @@ const StockReplenishment = ({ user }) => {
         </button>
       </div>
       <div className="mb-3">
+        <label className="form-label">
+          <strong>Supplier: </strong>
+        </label>
         <select
           className="form-select"
           aria-label="Default select example"

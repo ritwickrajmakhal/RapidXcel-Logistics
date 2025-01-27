@@ -77,7 +77,7 @@ const Products = ({ user }) => {
 
   return (
     <div className="products-container my-5">
-      <h1 className="text-center mb-4">Product Overview</h1>
+      <h1 className="text-center mb-4">Products Overview</h1>
       <form onSubmit={handleSubmit}>
         <div className="table-responsive">
           <table className="table table-bordered table-hover">
@@ -194,7 +194,7 @@ const Products = ({ user }) => {
             <option selected>Select Courier Service</option>
             {couriers_services.map((courier_service) => (
               <option key={courier_service.id} value={courier_service.id}>
-                {courier_service.name}, {courier_service.address}
+                {courier_service.name}
               </option>
             ))}
           </select>

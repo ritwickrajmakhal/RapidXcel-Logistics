@@ -12,14 +12,6 @@ const UpdateStock = () => {
     const [quantity, setQuantity] = useState('');
     const [weight, setWeight] = useState('');
     const [alert, setalert] = useState({type:"success",msg:"Default",status:false});
-    
-    const getStockbyID = async () => {
-        const res = await fetch(`${BACKEND_URL}/api/stocks/${params.id}`, {
-            credentials: 'include'
-        });
-        const data = await res.json();
-        setStock(data);
-    }
 
     const updateStock = async (event) => {
         event.preventDefault();
@@ -38,14 +30,23 @@ const UpdateStock = () => {
         })
         
         const data = await res.json();
-        setalert({
-            type:Object.keys(data)[0],
-            msg:data[Object.keys(data)[0]],
-            status:true
-        })
-        setTimeout(() => {
-            navigate("/dashboard/stock-management")
-        },2000);
+        if(res.ok) {
+            setalert({
+                type: "success",
+                msg: data.message,
+                status:true
+            });
+            setTimeout(() => {
+                navigate("/dashboard/stock-management");
+            },2000);
+        }
+        else {
+            setalert({
+                type: "danger",
+                msg: data.error,
+                status:true
+            });
+        }
     }
 
     useEffect(() => {
@@ -55,9 +56,15 @@ const UpdateStock = () => {
     }, [alert.status]);
 
     useEffect(() => {
-    // eslint-disable-next-line
-      getStockbyID();
-    }, []);
+        const getStockbyID = async () => {
+            const res = await fetch(`${BACKEND_URL}/api/stocks/${params.id}`, {
+                credentials: 'include'
+            });
+            const data = await res.json();
+            setStock(data);
+        }
+        getStockbyID();
+    }, [BACKEND_URL, params.id]);
 
     useEffect(() => {
       if(stock != null){       

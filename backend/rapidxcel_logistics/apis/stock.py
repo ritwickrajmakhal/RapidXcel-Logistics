@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from rapidxcel_logistics.models import Stock
 from rapidxcel_logistics import db
-from .utils import role_required
+from .utils import role_required, validation_error, not_found_error, internal_server_error
 from flask_login import login_required
 
 stock_bp = Blueprint('stock', __name__)
@@ -17,7 +17,7 @@ def get_stocks():
         stocks_list = [stock.to_dict() for stock in stocks]
         return jsonify(stocks_list)
     except Exception as e:
-        return jsonify({"danger":"Some Error Occured"}), 500
+        return internal_server_error(str(e))
 
 
 # Route to add a new Stock
@@ -28,12 +28,12 @@ def add_stock():
     data = request.get_json()
 
     if not data:
-        return jsonify({"danger":"Please provide required data"}), 400
+        return validation_error("Please provide required data")
 
     requied_fields = ['inventory_manager_id', 'name', 'price', 'quantity', 'weight']
     missing_fields = [field for field in requied_fields if field not in data]
     if missing_fields:
-        return jsonify({"danger": f"Missing Fields: {', '.join(missing_fields)}"}), 400
+        return validation_error(f"Missing Fields: {', '.join(missing_fields)}")
 
     new_stock = Stock(
         inventory_manager_id=data["inventory_manager_id"],
@@ -46,9 +46,9 @@ def add_stock():
     try:
         db.session.add(new_stock)
         db.session.commit()
-        return jsonify({"success": "Stock is Added Successfully"}), 201
+        return jsonify({"message": "Stock is Added Successfully", "stock" : new_stock.to_dict()}), 201
     except Exception as e:
-        return jsonify({"danger":"Some Error Occured"}), 500
+        return internal_server_error(str(e))
 
 
 # Route to delete Stock using ID
@@ -59,14 +59,14 @@ def delete_stock(stockId):
     stock = Stock.query.get(stockId)
 
     if not stock:
-        return jsonify({"danger":"Stock not Found"}), 404
+        return not_found_error("Stock")
 
     try:
         db.session.delete(stock)
         db.session.commit()
-        return jsonify({"success": "Stock Deleted Successfully"}), 200
+        return jsonify({"message": "Stock Deleted Successfully", "stock" : stock.to_dict()}), 200
     except Exception as e:
-        return jsonify({"danger":"Some Error Occured"}), 500
+        return internal_server_error(str(e))
 
 
 # Route to update Stock using ID
@@ -76,12 +76,12 @@ def delete_stock(stockId):
 def update_stock(stockId):
     data = request.get_json()
     if not data:
-        return jsonify({"danger":"Please provide required data"}), 400
+        return validation_error("Please provide required data")
 
     stock = Stock.query.get(stockId)
 
     if not stock:
-        return jsonify({"danger":"Stock not Found"}), 404
+        return not_found_error("Stock")
 
     try:
         stock.stock_name = data.get("name", stock.stock_name)
@@ -91,9 +91,9 @@ def update_stock(stockId):
 
         db.session.commit()
 
-        return jsonify({"success": "Stock Updated Successfully"}), 200
+        return jsonify({"message": "Stock Updated Successfully", "stock": stock.to_dict()}), 200
     except Exception as e:
-        return jsonify({"danger":"Some Error Occured"}), 500
+        return internal_server_error(str(e))
 
 
 # Route to get Stock by ID
@@ -104,6 +104,6 @@ def get_stock_by_id(stockId):
     stock = Stock.query.get(stockId)
 
     if not stock:
-        return jsonify({"danger":"Stock not Found"}), 404
+        return not_found_error("Stock")
 
     return jsonify(stock.to_dict()), 200
