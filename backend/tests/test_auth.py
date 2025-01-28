@@ -1,6 +1,7 @@
 import pytest
 from rapidxcel_logistics.models import User, db
 
+
 def test_register(client, init_db):
     response = client.post('/auth/register', json={
         'name': 'Test User',
@@ -11,6 +12,7 @@ def test_register(client, init_db):
     assert response.status_code == 201
     assert response.json == {'message': 'User registered successfully'}
 
+
 def test_register_missing_fields(client, init_db):
     response = client.post('/auth/register', json={
         'name': 'Test User',
@@ -18,6 +20,7 @@ def test_register_missing_fields(client, init_db):
     })
     assert response.status_code == 400
     assert 'Missing required fields' in response.json['error']
+
 
 def test_login(client, init_db):
     client.post('/auth/register', json={
@@ -33,6 +36,7 @@ def test_login(client, init_db):
     assert response.status_code == 200
     assert response.json == {'message': 'Logged in successfully'}
 
+
 def test_login_invalid_credentials(client, init_db):
     response = client.post('/auth/login', json={
         'email': 'nonexistent@example.com',
@@ -40,6 +44,7 @@ def test_login_invalid_credentials(client, init_db):
     })
     assert response.status_code == 401
     assert response.json == {'message': 'Invalid credentials'}
+
 
 def test_logout(client, init_db):
     client.post('/auth/register', json={
@@ -56,6 +61,7 @@ def test_logout(client, init_db):
     assert response.status_code == 200
     assert response.json == {'message': 'Logged out successfully'}
 
+
 def test_profile(client, init_db):
     client.post('/auth/register', json={
         'name': 'Test User',
@@ -71,6 +77,7 @@ def test_profile(client, init_db):
     assert response.status_code == 200
     assert response.json['email'] == 'testuser@example.com'
 
+
 def test_forgot_password(client, init_db):
     client.post('/auth/register', json={
         'name': 'Test User',
@@ -83,6 +90,7 @@ def test_forgot_password(client, init_db):
     })
     assert response.status_code == 200
     assert response.json == {'message': 'Password reset email sent'}
+
 
 def test_reset_password(client, init_db):
     client.post('/auth/register', json={

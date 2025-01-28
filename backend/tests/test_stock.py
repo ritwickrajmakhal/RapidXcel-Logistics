@@ -31,31 +31,27 @@ def auth(client):
 def test_create_stock(client, auth):
     auth()
     response = client.post('/api/stocks', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
         'weight': 0.0
     })
     assert response.status_code == 201
-    assert response.json == {"success": "Stock is Added Successfully"}
-
-    stock = Stock.query.filter_by(stock_name='Stock 1').first()
-    assert stock is not None
-    assert stock.price == 10
-    assert stock.quantity == 100
-    assert stock.weight == 0.0
+    assert response.json == {'message': 'Stock is Added Successfully', 'stock': {
+        'price': 10, 'quantity': 100, 'stock_id': 1, 'stock_name': 'Stock 1', 'weight': 0.0}}
 
 
 def test_create_stock_invalid_body(client, auth):
     auth()
     response = client.post('/api/stocks', json={})
     assert response.status_code == 400
-    assert response.json == {"danger": "Please provide required data"}
+    assert response.json == {"error": "Please provide required data"}
 
     response = client.post('/api/stocks', json={'name': 'Stock 1'})
     assert response.status_code == 400
     assert response.json == {
-        "danger": "Missing Fields: price, quantity, weight"}
+        "error": "Missing Fields: inventory_manager_id, price, quantity, weight"}
 
 
 def test_get_stocks(client, auth):
@@ -65,6 +61,7 @@ def test_get_stocks(client, auth):
     assert response.json == []
 
     response = client.post('/api/stocks', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
@@ -84,6 +81,7 @@ def test_get_stocks(client, auth):
 def test_delete_stock(client, auth):
     auth()
     response = client.post('/api/stocks', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
@@ -96,7 +94,8 @@ def test_delete_stock(client, auth):
 
     response = client.delete(f'/api/stocks/{stock.stock_id}')
     assert response.status_code == 200
-    assert response.json == {"success": "Stock Deleted Successfully"}
+    assert response.json == {'message': 'Stock Deleted Successfully', 'stock': {
+        'price': 10, 'quantity': 100, 'stock_id': 1, 'stock_name': 'Stock 1', 'weight': 0.0}}
 
     stock = Stock.query.filter_by(stock_name='Stock 1').first()
     assert stock is None
@@ -105,6 +104,7 @@ def test_delete_stock(client, auth):
 def test_update_stock(client, auth):
     auth()
     response = client.post('/api/stocks', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
@@ -116,13 +116,15 @@ def test_update_stock(client, auth):
     assert stock is not None
 
     response = client.put(f'/api/stocks/{stock.stock_id}', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 2',
         'quantity': 200,
         'price': 20,
         'weight': 1.0
     })
     assert response.status_code == 200
-    assert response.json == {"success": "Stock Updated Successfully"}
+    assert response.json == {'message': 'Stock Updated Successfully', 'stock': {
+        'price': 20, 'quantity': 200, 'stock_id': 1, 'stock_name': 'Stock 2', 'weight': 1.0}}
 
     stock = Stock.query.filter_by(stock_name='Stock 2').first()
     assert stock is not None
@@ -134,6 +136,7 @@ def test_update_stock(client, auth):
 def test_get_stock_by_id(client, auth):
     auth()
     response = client.post('/api/stocks', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
@@ -156,31 +159,34 @@ def test_get_stock_by_id_invalid_id(client, auth):
     auth()
     response = client.get('/api/stocks/999')
     assert response.status_code == 404
-    assert response.json == {"danger": "Stock not Found"}
+    assert response.json == {"error": "Stock not found"}
 
 
 def test_delete_stock_invalid_id(client, auth):
     auth()
     response = client.delete('/api/stocks/999')
     assert response.status_code == 404
-    assert response.json == {"danger": "Stock not Found"}
+    print(response.json)
+    assert response.json == {"error": "Stock not found"}
 
 
 def test_update_stock_invalid_id(client, auth):
     auth()
     response = client.put('/api/stocks/999', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 2',
         'quantity': 200,
         'price': 20,
         'weight': 1.0
     })
     assert response.status_code == 404
-    assert response.json == {"danger": "Stock not Found"}
+    assert response.json == {"error": "Stock not found"}
 
 
 def test_update_stock_invalid_body(client, auth):
     auth()
     response = client.post('/api/stocks', json={
+        'inventory_manager_id': 2,
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
@@ -193,11 +199,11 @@ def test_update_stock_invalid_body(client, auth):
 
     response = client.put(f'/api/stocks/{stock.stock_id}', json={})
     assert response.status_code == 400
-    assert response.json == {"danger": "Please provide required data"}
+    assert response.json == {"error": "Please provide required data"}
 
 
 def test_delete_stock_invalid_id(client, auth):
     auth()
     response = client.delete('/api/stocks/999')
     assert response.status_code == 404
-    assert response.json == {"danger": "Stock not Found"}
+    assert response.json == {"error": "Stock not found"}

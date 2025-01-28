@@ -1,6 +1,7 @@
-from rapidxcel_logistics.models import Stock
+from rapidxcel_logistics.models import Stock, User
 import pytest
 from rapidxcel_logistics import db
+
 
 @pytest.fixture
 def auth(client):
@@ -11,27 +12,35 @@ def auth(client):
             'password': password,
             'role': role
         })
-        print(f"Register response: {register_response.status_code}, {register_response.json}")
+        print(
+            f"Register response: {register_response.status_code}, {register_response.json}")
 
         login_response = client.post('/auth/login', json={
             'email': email,
             'password': password
         })
-        print(f"Login response: {login_response.status_code}, {login_response.json}")
+        print(
+            f"Login response: {login_response.status_code}, {login_response.json}")
 
         assert register_response.status_code == 201
         assert login_response.status_code == 200
 
     return register_and_login
 
+
 @pytest.fixture
 def init_stocks(app):
     with app.app_context():
-        stock1 = Stock(stock_name='Product 1', price=100, quantity=50, weight=1.5)
-        stock2 = Stock(stock_name='Product 2', price=200, quantity=30, weight=2.0)
+        # Assuming you have a valid inventory manager with id 1
+        inventory_manager_id = 1
+        stock1 = Stock(inventory_manager_id=inventory_manager_id,
+                       stock_name='Product 1', price=100, quantity=50, weight=1.5)
+        stock2 = Stock(inventory_manager_id=inventory_manager_id,
+                       stock_name='Product 2', price=200, quantity=30, weight=2.0)
         db.session.add(stock1)
         db.session.add(stock2)
         db.session.commit()
+
 
 def test_get_orders_empty_db(client, auth):
     auth()
@@ -51,10 +60,11 @@ def test_create_order_valid_body(client, auth, init_stocks):
     auth()
     response = client.post('/api/orders', json={
         'customer_id': 1,
+        'courier_service_id': 2,
         'shipping_address': '123 Test St',
         'pin_code': '123456',
         'phone_number': '1234567890',
-        'items': [{'product_id': 1, 'quantity': 2, 'weight': 5.0, 'price': 100.0}],
+        'items': [{'stock_id': 1, 'product_name': 'Product 1', 'quantity': 2, 'weight': 5.0, 'price': 100.0}],
         'location_type': 'urban'
     })
     assert response.status_code == 201
@@ -75,10 +85,11 @@ def test_get_order_valid_id(client, auth, init_stocks):
     auth()
     response = client.post('/api/orders', json={
         'customer_id': 1,
+        'courier_service_id': 2,
         'shipping_address': '123 Test St',
         'pin_code': '123456',
         'phone_number': '1234567890',
-        'items': [{'product_id': 1, 'quantity': 2, 'weight': 1.5, 'price': 100.0}],
+        'items': [{'stock_id': 1, 'product_name': 'Product 1', 'quantity': 2, 'weight': 1.5, 'price': 100.0}],
         'location_type': 'urban'
     })
     assert response.status_code == 201
@@ -99,6 +110,7 @@ def test_delete_order_valid_id(client, auth):
     auth()
     client.post('/api/orders', json={
         'customer_id': 1,
+        'courier_service_id': 2,
         'shipping_address': '123 Test St',
         'pin_code': '123456',
         'phone_number': '1234567890',
@@ -115,6 +127,7 @@ def test_update_order_valid_id(client, auth):
     # Create an order to update
     client.post('/api/orders', json={
         'customer_id': 1,
+        'courier_service_id': 2,
         'shipping_address': '123 Test St',
         'pin_code': '123456',
         'phone_number': '1234567890',
