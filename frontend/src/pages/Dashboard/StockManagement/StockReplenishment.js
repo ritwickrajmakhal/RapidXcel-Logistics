@@ -36,7 +36,7 @@ const StockReplenishment = ({ user }) => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [BACKEND_URL]);
 
   const handleAddToCart = (product, quantity) => {
     if (quantity <= 0 || quantity > product.quantity) {
