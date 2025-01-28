@@ -1,219 +1,212 @@
-import React, { useEffect, useRef } from "react";
-import "./style.css";
-import {
-  Chart,
-  BarController,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  PieController,
-  ArcElement,
-} from "chart.js";
-
-// Register components for Chart.js
-Chart.register(
-  BarController,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  PieController,
-  ArcElement
-);
+import React, { useState, useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
+import './style.css';
+import { toast } from 'react-toastify';
 
 const Analytics = () => {
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
-  const salesChartRef = useRef(null);
-  const profitChartRef = useRef(null);
+    // Refs to store chart instances
+    const ordersChartRef = useRef(null);
+    const ordersPieChartRef = useRef(null);
+    const lineChartRef = useRef(null);
 
-  useEffect(() => {
-    const form = document.getElementById("analytics-form");
+    useEffect(() => {
+        if (startDate && endDate) {
+            updateCharts();
+        }
+    }, [startDate, endDate]);
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const startDate = document.getElementById("start-date").value;
-      const endDate = document.getElementById("end-date").value;
+    const updateCharts = async () => {
+        // Destroy existing charts if they exist
+        if (ordersChartRef.current) {
+            ordersChartRef.current.destroy();
+        }
+        if (ordersPieChartRef.current) {
+            ordersPieChartRef.current.destroy();
+        }
+        if (lineChartRef.current) {
+            lineChartRef.current.destroy();
+        }
 
-      if (!startDate || !endDate) {
-        alert("Please select both start and end dates.");
-        return;
-      }
+        const realData = await fetchAnalyticsData(startDate, endDate);
 
-      const analyticsData = await fetchAnalyticsData(BACKEND_URL, startDate, endDate);
-      if (analyticsData) {
-        updateCharts(analyticsData);
-      }
-    });
-  }, [BACKEND_URL]);
+        if (realData && realData.labels.length > 0) {
+            // Bar chart (Order Performance)
+            const ctxOrders = document.getElementById('ordersChart').getContext('2d');
+            ordersChartRef.current = new Chart(ctxOrders, {
+                type: 'bar',
+                data: {
+                    labels: realData.labels,
+                    datasets: [{
+                        label: 'Orders',
+                        data: realData.orderData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: "Number of Orders" }
+                        },
+                        x: {
+                            title: { display: true, text: "Months" }
+                        }
+                    }
+                }
+            });
 
-  const fetchAnalyticsData = async (url, startDate, endDate) => {
-    try {
-      const response = await fetch(
-        `${url}/api/analytics?startDate=${startDate}&endDate=${endDate}`,
-        { credentials: "include" }
-      );
+            // Pie chart (Order distribution)
+            const ctxPie = document.getElementById('ordersPieChart').getContext('2d');
+            ordersPieChartRef.current = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: realData.labels,
+                    datasets: [{
+                        label: 'Orders',
+                        data: realData.orderData,
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' orders';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch analytics data");
-      }
+            // Line chart (Orders Trend)
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            lineChartRef.current = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: realData.labels,
+                    datasets: [{
+                        label: 'Orders Trend',
+                        data: realData.orderData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: "Number of Orders" }
+                        },
+                        x: {
+                            title: { display: true, text: "Months" }
+                        }
+                    }
+                }
+            });
 
-      return await response.json();
-    } catch (error) {
-      console.error(error.message);
-      return null;
-    }
-  };
+        } else {
+            toast.error('No data available for the selected date range');
+        }
+    };
 
-  const updateCharts = (data) => {
-    // Destroy existing charts to reuse canvas
-    if (salesChartRef.current) {
-      salesChartRef.current.destroy();
-    }
-    if (profitChartRef.current) {
-      profitChartRef.current.destroy();
-    }
+    const fetchAnalyticsData = async (startDate, endDate) => {
+        const response = await fetch(`${BACKEND_URL}/api/analytics?startDate=${startDate}&endDate=${endDate}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        return data;
+    };
 
-    // Create new charts
-    const salesChartCtx = document.getElementById("productSalesChart").getContext("2d");
-    const profitChartCtx = document.getElementById("profitLossChart").getContext("2d");
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        updateCharts();
+    };
 
-    salesChartRef.current = new Chart(salesChartCtx, {
-      type: "bar",
-      data: {
-        labels: data.labels,
-        datasets: [
-          {
-            label: "Sales",
-            data: data.salesData,
-            backgroundColor: "rgba(255, 159, 64, 0.6)",
-            borderColor: "rgba(255, 159, 64, 1)",
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true },
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => `${tooltipItem.label}: $${tooltipItem.raw}`,
-            },
-          },
-        },
-      },
-    });
+    return (
+        <div className="analytics-container">
+            <header>
+                <div className="logo">
+                    <h1>Inventory Reporting</h1>
+                </div>
+            </header>
 
-    profitChartRef.current = new Chart(profitChartCtx, {
-      type: "pie",
-      data: {
-        labels: data.labels,
-        datasets: [
-          {
-            data: data.profitsData,
-            backgroundColor: [
-              "rgba(54, 162, 235, 0.6)",
-              "rgba(75, 192, 192, 0.6)",
-              "rgba(153, 102, 255, 0.6)",
-            ],
-            borderColor: [
-              "rgba(54, 162, 235, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(153, 102, 255, 1)",
-            ],
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true },
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => `${tooltipItem.label}: $${tooltipItem.raw}`,
-            },
-          },
-        },
-      },
-    });
-  };
+            <nav>
+                <ul>
+                    <li><a href="#inventory">Inventory Reports</a></li>
+                    <li><a href="#order-performance">Order Performance</a></li>
+                    <li><a href="#sales">Sales & Product Analytics</a></li>
+                </ul>
+            </nav>
 
-  return (
-    <div className="analytics-container">
-      <Header />
-      <NavBar />
-      <MainContent />
-    </div>
-  );
+            <main>
+                <section id="filters">
+                    <h2>Filter Analytics</h2>
+                    <form id="analytics-form" onSubmit={handleSubmit}>
+                        <div>
+                            <label htmlFor="start-date">Select Date Range:</label>
+                            <input type="date" id="start-date" name="start-date" required
+                                   value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                            <span>to</span>
+                            <input type="date" id="end-date" name="end-date" required
+                                   value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        </div>
+
+                        <button type="submit">Generate Analytics</button>
+                    </form>
+                </section>
+
+                <section id="order-performance" className="section">
+                    <h2>Order Performance</h2>
+                    <div className="charts">
+                        <div className="chart-container">
+                            <canvas id="ordersChart" style={{ width: '100%', height: '400px' }}></canvas>
+                        </div>
+                        <div className="chart-container">
+                            <canvas id="ordersPieChart" style={{ width: '100%', height: '400px' }}></canvas>
+                        </div>
+                        <div className="chart-container">
+                            <canvas id="lineChart" style={{ width: '100%', height: '300px' }}></canvas>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer>
+                <p>© 2024 Inventory Management Dashboard | All rights reserved</p>
+            </footer>
+        </div>
+    );
 };
-
-const Header = () => (
-  <header>
-    <div className="logo">
-      <h1>Inventory Reporting</h1>
-    </div>
-  </header>
-);
-
-const NavBar = () => (
-  <nav>
-    <ul>
-      <li>
-        <a href="#inventory">Inventory Reports</a>
-      </li>
-      <li>
-        <a href="#order-performance">Order Performance</a>
-      </li>
-      <li>
-        <a href="#sales">Sales & Product Analytics</a>
-      </li>
-    </ul>
-  </nav>
-);
-
-const MainContent = () => (
-  <main>
-    <FilterSection />
-    <AnalyticsSection />
-  </main>
-);
-
-const FilterSection = () => (
-  <section id="filters">
-    <h2>Filter Analytics</h2>
-    <form id="analytics-form">
-      <div>
-        <label htmlFor="start-date">Select Date Range:</label>
-        <input type="date" id="start-date" name="start-date" />
-        <input type="date" id="end-date" name="end-date" />
-      </div>
-      <button type="submit">Generate Analytics</button>
-    </form>
-  </section>
-);
-
-const AnalyticsSection = () => (
-  <section id="sales" className="section">
-    <h2>Sales & Product Analytics</h2>
-    <div className="charts">
-      <div className="chart-container">
-        <canvas id="productSalesChart"></canvas>
-      </div>
-      <div className="chart-container">
-        <canvas id="profitLossChart"></canvas>
-      </div>
-    </div>
-  </section>
-);
 
 export default Analytics;
