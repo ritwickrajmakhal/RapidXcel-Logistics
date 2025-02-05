@@ -88,17 +88,17 @@ const UpdateStock = () => {
             
             <div className="mb-3">
                 <label htmlFor="price" className="form-label">Stock Price</label>
-                <input type="text" name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} />
+                <input type="number" min={0} name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} />
             </div>
             
             <div className="mb-3">
                 <label htmlFor="quantity" className="form-label">Stock Quantity</label>
-                <input type="text" name="quantity" className="form-control" id="quantity" value={quantity} onChange={(event) => { setQuantity(event.target.value) }} />
+                <input type="number" min={0} name="quantity" className="form-control" id="quantity" value={quantity} onChange={(event) => { setQuantity(event.target.value) }} />
             </div>
             
             <div className="mb-3">
                 <label htmlFor="weight" className="form-label">Stock Weight</label>
-                <input type="text" name='weight' className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} />
+                <input type="number" min={0} name='weight' className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} />
             </div>
             <button type="submit" className="btn btn-primary">Submit</button>
             </form>

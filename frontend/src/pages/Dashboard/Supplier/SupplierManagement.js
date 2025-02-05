@@ -55,15 +55,21 @@ const SupplierManagement = () => {
                 body: JSON.stringify(supplier)
             });
             const data = await res.json();
-            if (mode === "add") {
+            if (mode === "add" && res.ok) {
                 setSuppliers([...suppliers, data.supplier]);
+                document.getElementById('closeAddEditModalBtn').click(); // Close modal
                 toast.success(data.message);
-            } else {
+                setErrors({});
+
+            } else if (mode === "edit" && res.ok) {
                 setSuppliers(suppliers.map(s => s.id === data.supplier.id ? data.supplier : s));
+                document.getElementById('closeAddEditModalBtn').click(); // Close modal
                 toast.success(data.message);
+                setErrors({});
             }
-            setErrors({});
-            document.getElementById('closeAddEditModalBtn').click(); // Close modal
+            else {
+                toast.error(data.message);
+            }
         } catch (err) {
             toast.error(err);
         }
