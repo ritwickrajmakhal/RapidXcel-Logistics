@@ -2,6 +2,7 @@ from . import db
 from flask_login import UserMixin
 import uuid
 from datetime import datetime, timedelta
+from sqlalchemy import CheckConstraint
 
 # User Table
 class User(db.Model, UserMixin):
@@ -59,6 +60,11 @@ class Stock(db.Model):
     # relationships
     inventory_manager = db.relationship('User', back_populates='stocks', lazy=True)
     
+    # constraints
+    __table_args__ = (
+        CheckConstraint('quantity >= 0', name='check_quantity_non_negative'),
+    )
+
     def __repr__(self):
         return f"<Stock {self.stock_name}>"
     
@@ -125,6 +131,11 @@ class OrderItem(db.Model):
 
     order = db.relationship('Order', back_populates='order_items')
     
+    # constraints
+    __table_args__ = (
+        CheckConstraint('quantity >= 0', name='check_quantity_non_negative'),
+    )
+
     def to_dict(self):
         """Convert the OrderItem instance into a dictionary."""
         return {
@@ -172,6 +183,11 @@ class Product(db.Model):
 
     user = db.relationship('User', back_populates='products')
     replenishment_order_items = db.relationship('ReplenishmentOrderItem', back_populates='product', lazy=True, cascade='all, delete-orphan')
+
+    # constraints
+    __table_args__ = (
+        CheckConstraint('quantity >= 0', name='check_quantity_non_negative'),
+    )
 
     def to_dict(self):
         return {
@@ -228,6 +244,11 @@ class ReplenishmentOrderItem(db.Model):
     order = db.relationship('ReplenishmentOrder', back_populates='order_items')
     product = db.relationship('Product', back_populates='replenishment_order_items')
     
+    # constraints
+    __table_args__ = (
+        CheckConstraint('quantity >= 0', name='check_quantity_non_negative'),
+    )
+
     def to_dict(self):
         """Convert the OrderItem instance into a dictionary."""
         return {
