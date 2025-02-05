@@ -16,6 +16,7 @@ const Products = ({ user }) => {
     courier_service_id: 0,
   });
   const [couriers_services, setCouriersServices] = useState([]);
+  const [pinCodeError, setPinCodeError] = useState("");
 
   // Fetch products and courier services
   useEffect(() => {
@@ -56,6 +57,20 @@ const Products = ({ user }) => {
     });
   };
 
+  const validatePinCode = async (pin_code) => {
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin_code}`);
+      const data = await res.json();
+      if (data[0].Status === "Success" && data[0].PostOffice) {
+        return true; // PIN code is valid
+      }
+      return false; // PIN code is invalid
+    } catch (error) {
+      console.error("Error validating PIN code:", error);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { shipping_address, pin_code, location_type, phone_number, items } =
@@ -70,6 +85,14 @@ const Products = ({ user }) => {
     ) {
       alert("Please fill in all required fields and add at least one product.");
       return;
+    }
+
+    const isPinCodeValid = await validatePinCode(pin_code);
+    if (!isPinCodeValid) {
+      setPinCodeError("Invalid PIN code. Please enter a valid PIN code.");
+      return;
+    } else {
+      setPinCodeError("");
     }
 
     navigate("/dashboard/products/order-preview", { state: { orderDetails } });
@@ -152,6 +175,7 @@ const Products = ({ user }) => {
             }
             required
           />
+          {pinCodeError && <div className="text-danger">{pinCodeError}</div>}
         </div>
 
         <div className="mb-3">
@@ -159,7 +183,7 @@ const Products = ({ user }) => {
             Location Type:
           </label>
           <select
-            class="form-select"
+            className="form-select"
             aria-label="Default select example"
             required
             onChange={(e) =>
@@ -181,7 +205,7 @@ const Products = ({ user }) => {
             Courier Service:
           </label>
           <select
-            class="form-select"
+            className="form-select"
             aria-label="Default select example"
             required
             onChange={(e) =>
