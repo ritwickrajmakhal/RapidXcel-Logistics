@@ -4,6 +4,7 @@ from rapidxcel_logistics import db
 from .utils import not_found_error, validation_error, internal_server_error, role_required
 from flask_login import login_required
 from werkzeug.security import generate_password_hash
+from sqlalchemy.exc import IntegrityError
 
 supplier_bp = Blueprint('supplier', __name__)
 #feature-1 supplier management
@@ -36,6 +37,11 @@ def add_supplier():
         db.session.add(new_supplier)
         db.session.commit()
         return jsonify({"message": "Supplier added successfully", "supplier": new_supplier.to_dict()}), 201
+    except IntegrityError as e:
+        db.session.rollback()
+        if 'UNIQUE constraint failed: users.email' in str(e.orig):
+            return jsonify({'message': 'Email already exists'}), 400
+        return internal_server_error(str(e))
     except Exception as e:
         return internal_server_error(str(e))
 
@@ -81,6 +87,11 @@ def update_supplier(supplier_id):
 
         db.session.commit()
         return jsonify({"message": "Supplier updated successfully", "supplier": supplier.to_dict()}), 200
+    except IntegrityError as e:
+        db.session.rollback()
+        if 'UNIQUE constraint failed: users.email' in str(e.orig):
+            return jsonify({'message': 'Email already exists'}), 400
+        return internal_server_error(str(e))
     except Exception as e:
         return internal_server_error(str(e))
 
