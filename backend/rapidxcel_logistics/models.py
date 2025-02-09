@@ -56,6 +56,7 @@ class Stock(db.Model):
     price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     weight = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # Created timestamp
 
     # relationships
     inventory_manager = db.relationship('User', back_populates='stocks', lazy=True)
@@ -76,6 +77,7 @@ class Stock(db.Model):
             'price': self.price,
             'quantity': self.quantity,
             'weight': self.weight,
+            'created_At': self.created_at,
         }
 
 # Customer's Orders Table
