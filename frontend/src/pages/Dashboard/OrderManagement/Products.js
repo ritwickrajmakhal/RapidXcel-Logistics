@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./css/styles.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Products = ({ user }) => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -73,7 +74,7 @@ const Products = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { shipping_address, pin_code, location_type, phone_number, items } =
+    const { shipping_address, pin_code, location_type, phone_number, items, courier_service_id } =
       orderDetails;
 
     if (
@@ -81,9 +82,10 @@ const Products = ({ user }) => {
       !pin_code ||
       !phone_number ||
       items.length === 0 ||
-      !location_type
+      !location_type ||
+      !courier_service_id
     ) {
-      alert("Please fill in all required fields and add at least one product.");
+      toast.warning("Please fill in all required fields and add at least one product.");
       return;
     }
 

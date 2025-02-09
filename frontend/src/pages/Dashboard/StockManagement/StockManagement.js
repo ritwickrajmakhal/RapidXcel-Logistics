@@ -5,7 +5,6 @@ import "./css/StockManagement.css";
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import DashboardMetrics from './DashboardMetrics';
 
 const StockManagement = ({ user, setUser }) => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -78,7 +77,6 @@ const StockManagement = ({ user, setUser }) => {
                 <h2>Stock Management</h2>
                 <Link className="btn btn-primary" to="/dashboard/stock-management/addStock">Add Stock</Link>
             </div>
-            <DashboardMetrics />
             {alert.status && <Alert type={alert.type} msg={alert.msg} />}
             <div className='table-container'>
 
