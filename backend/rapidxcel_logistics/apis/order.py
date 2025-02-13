@@ -161,6 +161,11 @@ def update_order(order_id):
     # Update the order attributes dynamically
     for key, value in data.items():
         if hasattr(order, key):
+            if key == 'created_at':
+                try:
+                    value = datetime.fromisoformat(value)
+                except ValueError:
+                    return validation_error('Invalid datetime format for created_at')
             setattr(order, key, value)
             if key == 'status' and value != old_status:
                 status_updated = True
