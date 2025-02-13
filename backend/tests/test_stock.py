@@ -35,12 +35,17 @@ def test_create_stock(client, auth):
         'name': 'Stock 1',
         'quantity': 100,
         'price': 10,
-        'weight': 0.0
+        'weight': 0.0,
     })
     assert response.status_code == 201
-    assert response.json == {'message': 'Stock is Added Successfully', 'stock': {
-        'price': 10, 'quantity': 100, 'stock_id': 1, 'stock_name': 'Stock 1', 'weight': 0.0}}
-
+    response_json = response.json
+    assert response_json['message'] == 'Stock is Added Successfully'
+    assert response_json['stock']['price'] == 10
+    assert response_json['stock']['quantity'] == 100
+    assert response_json['stock']['stock_id'] == 1
+    assert response_json['stock']['stock_name'] == 'Stock 1'
+    assert response_json['stock']['weight'] == 0.0
+    assert 'created_At' in response_json['stock']
 
 def test_create_stock_invalid_body(client, auth):
     auth()
@@ -94,8 +99,14 @@ def test_delete_stock(client, auth):
 
     response = client.delete(f'/api/stocks/{stock.stock_id}')
     assert response.status_code == 200
-    assert response.json == {'message': 'Stock Deleted Successfully', 'stock': {
-        'price': 10, 'quantity': 100, 'stock_id': 1, 'stock_name': 'Stock 1', 'weight': 0.0}}
+    response_json = response.json
+    assert response_json['message'] == 'Stock Deleted Successfully'
+    assert response_json['stock']['price'] == 10
+    assert response_json['stock']['quantity'] == 100
+    assert response_json['stock']['stock_id'] == 1
+    assert response_json['stock']['stock_name'] == 'Stock 1'
+    assert response_json['stock']['weight'] == 0.0
+    assert 'created_At' in response_json['stock']
 
     stock = Stock.query.filter_by(stock_name='Stock 1').first()
     assert stock is None
@@ -123,8 +134,14 @@ def test_update_stock(client, auth):
         'weight': 1.0
     })
     assert response.status_code == 200
-    assert response.json == {'message': 'Stock Updated Successfully', 'stock': {
-        'price': 20, 'quantity': 200, 'stock_id': 1, 'stock_name': 'Stock 2', 'weight': 1.0}}
+    response_json = response.json
+    assert response_json['message'] == 'Stock Updated Successfully'
+    assert response_json['stock']['price'] == 20
+    assert response_json['stock']['quantity'] == 200
+    assert response_json['stock']['stock_id'] == 1
+    assert response_json['stock']['stock_name'] == 'Stock 2'
+    assert response_json['stock']['weight'] == 1.0
+    assert 'created_At' in response_json['stock']
 
     stock = Stock.query.filter_by(stock_name='Stock 2').first()
     assert stock is not None
