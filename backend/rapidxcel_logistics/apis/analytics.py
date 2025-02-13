@@ -12,15 +12,15 @@ def get_dates():
     end_date = request.args.get('endDate')      # format 'YYYY-MM-DD'
 
     if not start_date or not end_date:
-        return validation_error('startDate and endDate are required query parameters. Please provide both.')
+        return None, None, validation_error('startDate and endDate are required query parameters. Please provide both.')
 
     try:
         # Validate the date format
         datetime.strptime(start_date, '%Y-%m-%d')
         datetime.strptime(end_date, '%Y-%m-%d')
-        return (start_date, end_date)
+        return start_date, end_date, None
     except ValueError:
-        return validation_error('Invalid date format. Please provide dates in the format YYYY-MM-DD.')
+        return None, None, validation_error('Invalid date format. Please provide dates in the format YYYY-MM-DD.')
 
 
 # Analytics Route
@@ -28,7 +28,10 @@ def get_dates():
 @login_required
 @role_required('Inventory Manager')
 def get_analytics():
-    start_date, end_date = get_dates()
+    start_date, end_date, error = get_dates()
+    if error:
+        return error
+
     data = {
         'order_fulfilment_rate': {},
         'order_volume_trends': {}
@@ -85,7 +88,10 @@ def get_analytics():
 @login_required
 @role_required('Inventory Manager')
 def get_inventory_reports():
-    start_date, end_date = get_dates()
+    start_date, end_date, error = get_dates()
+    if error:
+        return error
+
     data = {
         'stock_levels': {},
         'supplier_stock_distribution': {}
@@ -134,7 +140,10 @@ def get_inventory_reports():
 @login_required
 @role_required('Inventory Manager')
 def get_sales_report():
-    start_date, end_date = get_dates()
+    start_date, end_date, error = get_dates()
+    if error:
+        return error
+
     data = {
         'product_sales_trends': {},
         'profit_loss_reports': {}
