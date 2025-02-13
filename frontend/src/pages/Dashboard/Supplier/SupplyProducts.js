@@ -95,6 +95,8 @@ const SupplyProducts = ({ user }) => {
                   </label>
                   <input
                     type="number"
+                    min={0}
+                    step="0.01"
                     className="form-control"
                     value={product.price}
                     onChange={(e) =>
@@ -109,6 +111,8 @@ const SupplyProducts = ({ user }) => {
                   </label>
                   <input
                     type="number"
+                    min={0}
+                    step="0.01"
                     className="form-control"
                     value={product.weight}
                     onChange={(e) =>
@@ -123,6 +127,7 @@ const SupplyProducts = ({ user }) => {
                   </label>
                   <input
                     type="number"
+                    min={0}
                     className="form-control"
                     value={product.quantity}
                     onChange={(e) =>

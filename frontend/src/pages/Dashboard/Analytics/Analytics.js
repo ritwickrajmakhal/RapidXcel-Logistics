@@ -5,9 +5,16 @@ import OrderPerformance from './OrderPerformance';
 import SalesAndProductAnalysis from './SalesAndProductAnalysis';
 
 const Analytics = () => {
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const getCurrentMonthDates = () => {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        return { firstDay, lastDay };
+    };
+
+    const { firstDay, lastDay } = getCurrentMonthDates();
+    const [startDate, setStartDate] = useState(firstDay);
+    const [endDate, setEndDate] = useState(lastDay);
 
     return (
         <div className="analytics-container">

@@ -26,6 +26,14 @@ const InventoryReports = ({ startDate, endDate }) => {
       await fetchAnalyticsData(startDate, endDate);
 
     if (stock_levels && stock_levels.products.length > 0) {
+      // Generate unique background colors
+      const backgroundColors = stock_levels.products.map((_, index) => {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        return `rgba(${r}, ${g}, ${b}, 0.6)`;
+      });
+
       // Pie chart (Stocks distribution)
       const ctxPie = document.getElementById("stocksPieChart").getContext("2d");
       stocksPieChartRef.current = new Chart(ctxPie, {
@@ -36,20 +44,10 @@ const InventoryReports = ({ startDate, endDate }) => {
             {
               label: "Orders",
               data: stock_levels.quantities,
-              backgroundColor: [
-                "rgba(75, 192, 192, 0.6)",
-                "rgba(153, 102, 255, 0.6)",
-                "rgba(255, 159, 64, 0.6)",
-                "rgba(255, 99, 132, 0.6)",
-                "rgba(54, 162, 235, 0.6)",
-              ],
-              borderColor: [
-                "rgba(75, 192, 192, 1)",
-                "rgba(153, 102, 255, 1)",
-                "rgba(255, 159, 64, 1)",
-                "rgba(255, 99, 132, 1)",
-                "rgba(54, 162, 235, 1)",
-              ],
+              backgroundColor: backgroundColors,
+              borderColor: backgroundColors.map((color) =>
+                color.replace("0.6", "1")
+              ),
               borderWidth: 1,
             },
           ],
@@ -57,6 +55,12 @@ const InventoryReports = ({ startDate, endDate }) => {
         options: {
           responsive: true,
           plugins: {
+            title: {
+              display: true,
+              text: "Stock Levels & Replenishment Needs",
+              position: "bottom",
+              padding: 20,
+            },
             legend: {
               position: "top",
             },
@@ -98,6 +102,14 @@ const InventoryReports = ({ startDate, endDate }) => {
         },
         options: {
           responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "Supplier Stock Distribution",
+              position: "bottom",
+              padding: 20,
+            },
+          },
           scales: {
             y: {
               beginAtZero: true,

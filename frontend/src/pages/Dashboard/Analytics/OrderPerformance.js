@@ -25,10 +25,7 @@ const OrderPerformance = ({ startDate, endDate }) => {
     const { order_fulfilment_rate, order_volume_trends } =
       await fetchAnalyticsData(startDate, endDate);
 
-    if (order_fulfilment_rate && order_fulfilment_rate.months.length > 0) {
-      // Line chart (Orders Trend)
-        console.log(order_volume_trends.total_orders, );
-        
+    if (order_fulfilment_rate && order_fulfilment_rate.months.length > 0) {        
       const ctxLine = document
         .getElementById("ordersLineChart1")
         .getContext("2d");
@@ -59,6 +56,14 @@ const OrderPerformance = ({ startDate, endDate }) => {
         },
         options: {
           responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "Order Fulfilment Rate",
+              position: "bottom",
+              padding: 20,
+            },
+          },
           scales: {
             y: {
               beginAtZero: true,
@@ -72,7 +77,7 @@ const OrderPerformance = ({ startDate, endDate }) => {
       });
     } else {
       toast.error(
-        "No data available for the selected date range for Order volume trends."
+        "No data available for the selected date range for Order fulfilment rate."
       );
     }
 
@@ -100,6 +105,14 @@ const OrderPerformance = ({ startDate, endDate }) => {
         },
         options: {
           responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "Order Volume Trends",
+              position: "bottom",
+              padding: 20,
+            },
+          },
           scales: {
             y: {
               beginAtZero: true,
@@ -126,7 +139,6 @@ const OrderPerformance = ({ startDate, endDate }) => {
       }
     );
     const data = await response.json();
-    console.log(data);
 
     return data;
   };

@@ -72,7 +72,7 @@ const AddStock = ({ user, setUser }) => {
 
                 <div className="mb-3">
                     <label htmlFor="price" className="form-label"><strong>Stock Price ($)</strong></label>
-                    <input type="number" min={0} name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} required />
+                    <input type="number" min={0} step="0.01" name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} required />
                 </div>
 
                 <div className="mb-3">

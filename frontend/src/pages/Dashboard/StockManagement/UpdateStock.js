@@ -88,7 +88,7 @@ const UpdateStock = () => {
             
             <div className="mb-3">
                 <label htmlFor="price" className="form-label">Stock Price</label>
-                <input type="number" min={0} name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} />
+                <input type="number" step="0.01" min={0} name='price' className="form-control" id="price" value={price} onChange={(event) => { setPrice(event.target.value) }} />
             </div>
             
             <div className="mb-3">

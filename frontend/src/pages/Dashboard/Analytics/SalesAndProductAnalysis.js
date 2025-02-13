@@ -23,7 +23,7 @@ const SalesAndProductAnalysis = ({ startDate, endDate }) => {
       endDate
     );
 
-    if (product_sales_trends) {
+    if (product_sales_trends && product_sales_trends.bestsellers.length > 0) {
       const datasets = [];
 
       // Add bestsellers to datasets
@@ -63,6 +63,14 @@ const SalesAndProductAnalysis = ({ startDate, endDate }) => {
         },
         options: {
           responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "Product Sales Trends",
+              position: "bottom",
+              padding: 20,
+            },
+          },
           scales: {
             y: {
               beginAtZero: true,
@@ -70,6 +78,9 @@ const SalesAndProductAnalysis = ({ startDate, endDate }) => {
           },
         },
       });
+    }
+    else {
+      toast.error("No data found for the selected date range for Sales Reports.");
     }
   };
 
