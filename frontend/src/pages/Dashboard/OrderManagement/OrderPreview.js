@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const OrderPreview = () => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -36,12 +37,11 @@ const OrderPreview = () => {
             body: JSON.stringify(orderDetails),
         });
         const data = await res.json();
-        console.log(data);
 
         if (res.ok) {
             navigate('/dashboard/products/confirm-order', { state: { orderDetails } });
         } else {
-            alert(data.error);
+            toast.error(data.message);
         }
     }
     return (

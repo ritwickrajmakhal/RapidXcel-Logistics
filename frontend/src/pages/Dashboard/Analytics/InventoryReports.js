@@ -62,7 +62,7 @@ const InventoryReports = ({ startDate, endDate }) => {
               padding: 20,
             },
             legend: {
-              position: "top",
+              display: false, // Hide the legend
             },
             tooltip: {
               callbacks: {

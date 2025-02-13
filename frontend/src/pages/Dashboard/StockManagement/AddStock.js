@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Alert from './Alert';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AddStock = ({ user, setUser }) => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -35,19 +36,13 @@ const AddStock = ({ user, setUser }) => {
                 const newStock = [...prev.stocks, data.stock];
                 return { ...prev, stocks: newStock };
             });
-            setalert({
-                type: "success",
-                msg: data.message,
-                status: true
-            });
-            setTimeout(() => {
-                navigate("/dashboard/stock-management");
-            }, 2000);
+            toast.success(data.message);
+            navigate('/dashboard/stock-management');
         }
         else {
             setalert({
                 type: "danger",
-                msg: data.error,
+                msg: data.message,
                 status: true
             });
         }
@@ -82,7 +77,7 @@ const AddStock = ({ user, setUser }) => {
 
                 <div className="mb-3">
                     <label htmlFor="weight" className="form-label"><strong>Stock Weight (kg)</strong></label>
-                    <input type="number" name='weight' min={0} className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} required />
+                    <input type="number" name='weight' min={0} step="0.01" className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} required />
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>

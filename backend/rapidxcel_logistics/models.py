@@ -208,7 +208,7 @@ class ReplenishmentOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     inventory_manager_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     supplier_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    status = db.Column(db.Enum('Order Recieved', 'Processing', 'In Transit', 'Delivered', 'Delayed', 'Canceled', name='order_status'), default='Order Recieved')
+    status = db.Column(db.Enum('Order Received', 'Processing', 'In Transit', 'Delivered', 'Delayed', 'Canceled', name='order_status'), default='Order Received')
     address = db.Column(db.String(255), nullable=True)
     mobile_number = db.Column(db.String(15), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())

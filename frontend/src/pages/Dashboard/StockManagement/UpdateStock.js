@@ -1,6 +1,7 @@
 import React,{ useState,useEffect } from 'react';
 import Alert from './Alert';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const UpdateStock = () => {
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -31,19 +32,13 @@ const UpdateStock = () => {
         
         const data = await res.json();
         if(res.ok) {
-            setalert({
-                type: "success",
-                msg: data.message,
-                status:true
-            });
-            setTimeout(() => {
-                navigate("/dashboard/stock-management");
-            },2000);
+            toast.success(data.message);
+            navigate("/dashboard/stock-management");
         }
         else {
             setalert({
                 type: "danger",
-                msg: data.error,
+                msg: data.message,
                 status:true
             });
         }
@@ -98,7 +93,7 @@ const UpdateStock = () => {
             
             <div className="mb-3">
                 <label htmlFor="weight" className="form-label">Stock Weight</label>
-                <input type="number" min={0} name='weight' className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} />
+                <input type="number" min={0} step="0.01" name='weight' className="form-control" id="weight" value={weight} onChange={(event) => { setWeight(event.target.value) }} />
             </div>
             <button type="submit" className="btn btn-primary">Submit</button>
             </form>
