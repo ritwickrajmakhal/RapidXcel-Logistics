@@ -132,6 +132,11 @@ def update_replenishment_order(order_id):
     try:
         for key, value in data.items():
             if hasattr(order, key):
+                if key == 'created_at':
+                    try:
+                        value = datetime.fromisoformat(value)
+                    except ValueError:
+                        return validation_error('Invalid date format')
                 if key == 'expected_delivery_time':
                     value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
                 setattr(order, key, value)

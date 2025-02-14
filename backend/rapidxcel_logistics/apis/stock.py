@@ -3,6 +3,7 @@ from rapidxcel_logistics.models import Stock
 from rapidxcel_logistics import db
 from .utils import role_required, validation_error, not_found_error, internal_server_error
 from flask_login import login_required
+from datetime import datetime
 
 stock_bp = Blueprint('stock', __name__)
 
@@ -88,6 +89,13 @@ def update_stock(stockId):
         stock.price = data.get("price", stock.price)
         stock.quantity = data.get("quantity", stock.quantity)
         stock.weight = data.get("weight", stock.weight)
+        
+        if 'created_at' in data:
+            try:
+                stock.created_at = datetime.fromisoformat(data['created_at'])
+            except ValueError:
+                return validation_error('Invalid datetime format for created_at')
+
 
         db.session.commit()
 
