@@ -60,6 +60,11 @@ PASSWORD_RESET_URL=http://localhost:3000/reset-password
 
 2. The server will start on `http://127.0.0.1:5000/`.
 
+## Deployment Commands
+
+![image](https://github.com/user-attachments/assets/fe75f794-036f-4a03-a2a9-bec25a9f6824)
+
+
 ## Contributing
 
 1. Fork the repository.
