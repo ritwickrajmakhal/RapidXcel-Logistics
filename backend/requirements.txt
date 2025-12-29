@@ -1,4 +1,4 @@
-psycopg2==2.9.11
+psycopg2-binary==2.9.11
 alembic==1.14.0
 blinker==1.9.0
 click==8.1.7
