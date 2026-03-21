@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import { toast } from "react-toastify";
 
@@ -7,13 +7,19 @@ const OrderPerformance = ({ startDate, endDate }) => {
   const ordersLineChart1Ref = useRef(null);
   const ordersLineChart2Ref = useRef(null);
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      updateCharts();
-    }
-  }, [startDate, endDate]);
+  const fetchAnalyticsData = useCallback(async (startDate, endDate) => {
+    const response = await fetch(
+      `${BACKEND_URL}/api/order-performance-and-demand-analysis?startDate=${startDate}&endDate=${endDate}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
 
-  const updateCharts = async () => {
+    return data;
+  }, [BACKEND_URL]);
+
+  const updateCharts = useCallback(async () => {
     // Destroy existing charts if they exist
     if (ordersLineChart1Ref.current) {
       ordersLineChart1Ref.current.destroy();
@@ -129,19 +135,14 @@ const OrderPerformance = ({ startDate, endDate }) => {
         "No data available for the selected date range for Order volume trends."
       );
     }
-  };
+  }, [endDate, fetchAnalyticsData, startDate]);
 
-  const fetchAnalyticsData = async (startDate, endDate) => {
-    const response = await fetch(
-      `${BACKEND_URL}/api/order-performance-and-demand-analysis?startDate=${startDate}&endDate=${endDate}`,
-      {
-        credentials: "include",
-      }
-    );
-    const data = await response.json();
+  useEffect(() => {
+    if (startDate && endDate) {
+      updateCharts();
+    }
+  }, [startDate, endDate, updateCharts]);
 
-    return data;
-  };
   return (
     <section id="order-performance">
       <h2>Order Performance</h2>

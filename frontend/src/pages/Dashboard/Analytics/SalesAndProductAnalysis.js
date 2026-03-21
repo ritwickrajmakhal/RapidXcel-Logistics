@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import { toast } from "react-toastify";
 
@@ -6,13 +6,18 @@ const SalesAndProductAnalysis = ({ startDate, endDate }) => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const salesLineChartRef = useRef(null);
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      updateCharts();
-    }
-  }, [startDate, endDate]);
+  const fetchSalesReportData = useCallback(async (startDate, endDate) => {
+    const response = await fetch(
+      `${BACKEND_URL}/api/sales-reports?startDate=${startDate}&endDate=${endDate}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+    return data;
+  }, [BACKEND_URL]);
 
-  const updateCharts = async () => {
+  const updateCharts = useCallback(async () => {
     // Destroy existing charts if they exist
     if (salesLineChartRef.current) {
       salesLineChartRef.current.destroy();
@@ -82,18 +87,14 @@ const SalesAndProductAnalysis = ({ startDate, endDate }) => {
     else {
       toast.error("No data found for the selected date range for Sales Reports.");
     }
-  };
+  }, [endDate, fetchSalesReportData, startDate]);
 
-  const fetchSalesReportData = async (startDate, endDate) => {
-    const response = await fetch(
-      `${BACKEND_URL}/api/sales-reports?startDate=${startDate}&endDate=${endDate}`,
-      {
-        credentials: "include",
-      }
-    );
-    const data = await response.json();
-    return data;
-  };
+  useEffect(() => {
+    if (startDate && endDate) {
+      updateCharts();
+    }
+  }, [startDate, endDate, updateCharts]);
+
   return (
     <section id="sales">
       <h2>Sales & Product Analytics</h2>

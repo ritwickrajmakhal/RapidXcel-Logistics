@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import { toast } from "react-toastify";
 
@@ -7,13 +7,18 @@ const InventoryReports = ({ startDate, endDate }) => {
   const stocksBarChartRef = useRef(null);
   const stocksPieChartRef = useRef(null);
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      updateCharts();
-    }
-  }, [startDate, endDate]);
+  const fetchAnalyticsData = useCallback(async (startDate, endDate) => {
+    const response = await fetch(
+      `${BACKEND_URL}/api/inventory-reports?startDate=${startDate}&endDate=${endDate}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+    return data;
+  }, [BACKEND_URL]);
 
-  const updateCharts = async () => {
+  const updateCharts = useCallback(async () => {
     // Destroy existing charts if they exist
     if (stocksPieChartRef.current) {
       stocksPieChartRef.current.destroy();
@@ -126,18 +131,14 @@ const InventoryReports = ({ startDate, endDate }) => {
         "No data available for the selected date range for Supplier Stock Distribution."
       );
     }
-  };
+  }, [endDate, fetchAnalyticsData, startDate]);
 
-  const fetchAnalyticsData = async (startDate, endDate) => {
-    const response = await fetch(
-      `${BACKEND_URL}/api/inventory-reports?startDate=${startDate}&endDate=${endDate}`,
-      {
-        credentials: "include",
-      }
-    );
-    const data = await response.json();
-    return data;
-  };
+  useEffect(() => {
+    if (startDate && endDate) {
+      updateCharts();
+    }
+  }, [startDate, endDate, updateCharts]);
+
   return (
     <section id="inventory-reports">
       <h2>Inventory Reports</h2>

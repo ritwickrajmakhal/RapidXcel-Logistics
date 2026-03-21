@@ -25,7 +25,7 @@ const CourierService = ({ user }) => {
             }
         };
         fetchOrders();
-    }, []);
+    }, [BACKEND_URL, user.id]);
 
     const handleUpdateStatus = async () => {
         if (selectedOrder && newStatus) {
