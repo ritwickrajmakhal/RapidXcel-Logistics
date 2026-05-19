@@ -11,7 +11,7 @@ courier_service_bp = Blueprint('courier', __name__)
 @role_required('Customer')
 def get_couriers():
     try:
-        couriers = User.query.filter_by(role='Courier Service').all()
+        couriers = db.session.query(User).filter_by(role='Courier Service').all()
         couriers_list = [courier.to_dict() for courier in couriers]
         return jsonify(couriers_list)
     except Exception as e:
