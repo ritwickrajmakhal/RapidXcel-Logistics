@@ -50,7 +50,7 @@ def add_supplier():
 @login_required
 @role_required('Inventory Manager')
 def get_suppliers():
-    suppliers = User.query.filter_by(role='Supplier').all()
+    suppliers = db.session.query(User).filter_by(role='Supplier').all()
     return jsonify([supplier.to_dict() for supplier in suppliers]), 200
 
 # to get a supplier
@@ -58,7 +58,7 @@ def get_suppliers():
 @login_required
 @role_required('Inventory Manager')
 def get_supplier(supplier_id):
-    supplier = User.query.get(supplier_id)
+    supplier = db.session.get(User, supplier_id)
 
     if not supplier:
         return not_found_error('Supplier')
@@ -74,7 +74,7 @@ def update_supplier(supplier_id):
     if not data:
         return validation_error('Request payload is missing')
     
-    supplier = User.query.get(supplier_id)
+    supplier = db.session.get(User, supplier_id)
 
     if not supplier:
         return not_found_error('Supplier')
@@ -100,7 +100,7 @@ def update_supplier(supplier_id):
 @login_required
 @role_required('Inventory Manager')
 def delete_supplier(supplier_id):
-    supplier = User.query.get(supplier_id)
+    supplier = db.session.get(User, supplier_id)
 
     if not supplier:
         return not_found_error('Supplier')

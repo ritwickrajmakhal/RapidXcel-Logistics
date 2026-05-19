@@ -53,7 +53,7 @@ def login():
     if missing_fields:
         return validation_error(f'Missing required fields: {", ".join(missing_fields)}')
 
-    user = User.query.filter_by(email=data['email']).first()
+    user = db.session.query(User).filter_by(email=data['email']).first()
     if user and check_password_hash(user.password_hash, data['password']):
         login_user(user)
         identity_changed.send(
@@ -80,7 +80,7 @@ def profile():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 def send_reset_email(user, reset_url):
@@ -147,7 +147,7 @@ def forgot_password():
     if not email:
         return validation_error('Email is required')
 
-    user = User.query.filter_by(email=email).first()
+    user = db.session.query(User).filter_by(email=email).first()
     if not user:
         return not_found_error('User')
 
@@ -161,7 +161,7 @@ def forgot_password():
 
 @auth_bp.route('/auth/reset-password/<token>', methods=['POST'])
 def reset_password(token):
-    user = User.query.filter_by(reset_token=token).first()
+    user = db.session.query(User).filter_by(reset_token=token).first()
     if not user or user.token_expiry < datetime.now():
         return validation_error('Invalid or expired token')
 

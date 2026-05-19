@@ -14,7 +14,7 @@ stock_bp = Blueprint('stock', __name__)
 @role_required('Inventory Manager', 'Customer')
 def get_stocks():
     try:
-        stocks = Stock.query.all()
+        stocks = db.session.query(Stock).all()
         stocks_list = [stock.to_dict() for stock in stocks]
         return jsonify(stocks_list)
     except Exception as e:
@@ -57,7 +57,7 @@ def add_stock():
 @login_required
 @role_required('Inventory Manager')
 def delete_stock(stockId):
-    stock = Stock.query.get(stockId)
+    stock = db.session.get(Stock, stockId)
 
     if not stock:
         return not_found_error("Stock")
@@ -79,7 +79,7 @@ def update_stock(stockId):
     if not data:
         return validation_error("Please provide required data")
 
-    stock = Stock.query.get(stockId)
+    stock = db.session.get(Stock, stockId)
 
     if not stock:
         return not_found_error("Stock")
@@ -109,7 +109,7 @@ def update_stock(stockId):
 @login_required
 @role_required('Inventory Manager')
 def get_stock_by_id(stockId):
-    stock = Stock.query.get(stockId)
+    stock = db.session.get(Stock, stockId)
 
     if not stock:
         return not_found_error("Stock")

@@ -98,7 +98,7 @@ def create_order():
             db.session.add(order_item)
 
             # reduce the quantity of the product in the stock
-            product = Stock.query.get(item['stock_id'])
+            product = db.session.get(Stock, item['stock_id'])
             product.quantity -= int(item['quantity'])
             db.session.add(product)
 
@@ -124,7 +124,7 @@ def create_order():
 @login_required
 @role_required('Customer', 'Courier Service')
 def get_orders():
-    orders = Order.query.all()  # Query all orders
+    orders = db.session.query(Order).all()  # Query all orders
     for order in orders:
         order.items = [item.to_dict() for item in order.order_items]
         # print(order.items)
@@ -136,7 +136,7 @@ def get_orders():
 @login_required
 @role_required('Customer')
 def get_order(order_id):
-    order = Order.query.get(order_id)  # Query the order by ID
+    order = db.session.get(Order, order_id)  # Query the order by ID
     if order:
         return jsonify(order.to_dict()), 200
     return not_found_error('Order')
@@ -147,7 +147,7 @@ def get_order(order_id):
 @login_required
 @role_required('Customer', 'Courier Service')
 def update_order(order_id):
-    order = Order.query.get(order_id)  # Query the order by ID
+    order = db.session.get(Order, order_id)  # Query the order by ID
     if not order:
         return not_found_error('Order')
 
@@ -206,7 +206,7 @@ def update_order(order_id):
 @login_required
 @role_required('Customer')
 def delete_order(order_id):
-    order = Order.query.get(order_id)  # Query the order by ID
+    order = db.session.get(Order, order_id)  # Query the order by ID
     if not order:
         return not_found_error('Order')
 

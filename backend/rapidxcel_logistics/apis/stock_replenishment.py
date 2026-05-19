@@ -12,7 +12,7 @@ stock_replenishment_bp = Blueprint('stock_replenishment', __name__)
 @login_required
 @role_required('Supplier', 'Inventory Manager')
 def get_products():
-    products = Product.query.all()
+    products = db.session.query(Product).all()
     return jsonify([product.to_dict() for product in products]), 200
 
 
@@ -96,7 +96,7 @@ def place_replenishment_order():
             db.session.add(order_item)
 
             # reduce the quantity of the product in the products table
-            product = Product.query.get(item['product_id'])
+            product = db.session.get(Product, item['product_id'])
             product.quantity -= int(item['quantity'])
             db.session.add(product)
 
@@ -111,7 +111,7 @@ def place_replenishment_order():
 @login_required
 @role_required('Inventory Manager', 'Supplier')
 def get_replenishment_orders():
-    orders = ReplenishmentOrder.query.all()
+    orders = db.session.query(ReplenishmentOrder).all()
     return jsonify([order.to_dict() for order in orders]), 200
 
 
@@ -125,7 +125,7 @@ def update_replenishment_order(order_id):
     if not data:
         return validation_error('Request payload is missing')
     
-    order = ReplenishmentOrder.query.get(order_id)
+    order = db.session.get(ReplenishmentOrder, order_id)
     if not order:
         return not_found_error('Order')
 
